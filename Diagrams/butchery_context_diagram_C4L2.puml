@@ -1,0 +1,70 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+
+!include DEVICONS/java.puml
+
+AddElementTag("webApplication", $shape=RoundedBoxShape(), $bgColor="red", $fontColor="black")
+AddElementTag("singlePageApplication", $shape=RoundedBoxShape(), $bgColor="lightGreen", $fontColor="black")
+AddElementTag("databases", $shape=RoundedBoxShape(), $bgColor="lightBlue", $fontColor="black", $legendText="Databases")
+
+
+SHOW_PERSON_OUTLINE()
+
+Person(customer, "Customer", "A customer that has an account at the butchery")
+
+
+System_Boundary(butchery, "Butchery System") {
+
+
+Container(application, "Wep Application", "Spring boot: Java", "Sends data requested in a single page application.", $tags="webApplication")
+Container(singlePageApplication, "Single-Page Application", "REACT JS", "Provides a GUI interface with all the functionalities of a Spring boot application.", $sprite="react",$tags="singlePageApplication")
+
+Container(api_gateway, "API Gateway", "Spring boot: Java", "Provides functionalities over the internet using HTTPS/JSON. Handles HTTPS requests and directs them to the appropriate microservice as HTTPS/JSON.", $sprite="java",$tags="MS")
+
+Container(customers_service, "Customers-Service","Spring boot: Java","Provides functionalities such as getting all Customers, getting one customer, creating a customer, update a customer, delete a customer ,and it also allows to get all or one purchases inside a customer",$sprite="java",$tags="MS")
+ContainerDb(customers_database, "Customers-DB","MySQL","Stores customers information such as name,contact information, their identifier and their address information.",$sprite="mysql",$tags="databases")
+
+Container(meats_service, "Meats-Service","Spring boot: Java","Provides functionalities such as getting all meats, getting one meat, creating a meat, update a meat and delete a meat.",$sprite="java",$tags="MS")
+ContainerDb(meats_database, "Meats-DB","MySQL","Store meats information such as the animal, the texture, the environment, the expirationDate and the price of the meat.",$sprite="mysql",$tags="databases")
+
+Container(butchers_service, "Butchers-Service","Spring boot: Java","Provides functionalities such as getting all butchers, getting one butcher, creating a butcher, update a butcher, delete a butcher.",$sprite="java",$tags="MS")
+ContainerDb(butchers_database, "Butchers-DB","MySQL","Store butchers information such as name, contact information, their identifier,their salary, their commission rate and their address information.",$sprite="mysql",$tags="databases")
+
+Container(purchases_service, "Purchases-Service","Spring boot: Java","Provides functionalities such as getting all Purchases, getting one purchase, creating a purchase, update a purchase, delete a purchase ,and it also allows to get all meats and butchers inside of one purchase.",$sprite="java",$tags="MS")
+ContainerDb(purchases_database, "Purchases-DB","MySQL","Stores information about the date of the purchase, time of the purchase and the final price.",$sprite="mysql",$tags="databases")
+
+}
+
+
+Rel(customer, application, "Visits ButcheryCandiac.com")
+Rel(customer, singlePageApplication,"Views meat and purchases")
+
+Rel_R(application, singlePageApplication,"Delivers data to the customer's web page")
+
+Rel(singlePageApplication,api_gateway,"Make API calls to","JSON/HTTPS")
+
+Rel_L(api_gateway,customers_service,"Sends request to","JSON/HTTPS")
+Rel_D(api_gateway,purchases_service,"Sends request to","JSON/HTTPS")
+Rel(api_gateway,meats_service,"Sends request to","JSON/HTTPS")
+Rel(api_gateway,butchers_service,"Sends request to","JSON/HTTPS")
+
+Rel(meats_service, meats_database,"Reads from and Writes to","JDBC")
+
+Rel(butchers_service,butchers_database,"Reads from and Writes to","JDBC")
+
+Rel(purchases_service,butchers_service,"Reads from and Writes to","JDBC")
+
+Rel(purchases_service,meats_service,"Reads from and Writes to","JDBC")
+
+BiRel(customers_service,purchases_service,"Reads from and Writes to","JDBC")
+
+Rel_L(customers_service,customers_database,"Reads from and Writes to","JDBC")
+
+Rel_L(purchases_service,purchases_database,"Reads from and Writes to","JDBC")
+
+
+SHOW_LEGEND()
+
+@enduml

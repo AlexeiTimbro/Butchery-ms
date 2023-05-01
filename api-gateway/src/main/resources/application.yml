@@ -1,0 +1,42 @@
+#default spring profile
+server:
+  error:
+    include-message: always
+
+
+logging:
+  level:
+    root: INFO
+    com.cardealership: DEBUG
+
+app:
+  customers-service:
+    host: localhost
+    port: 7001
+  meats-service:
+    host: localhost
+    port: 7002
+  butchers-service:
+    host: localhost
+    port: 7003
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+server:
+  port: 8080
+
+app:
+  customers-service:
+    host: customers-service
+    port: 8080
+  meats-service:
+    host: meats-service
+    port: 8080
+  butchers-service:
+    host: butchers-service
+    port: 8080
+

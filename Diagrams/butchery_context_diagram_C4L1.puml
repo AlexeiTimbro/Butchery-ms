@@ -1,0 +1,8 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Context.puml
+title System Context Diagram for a Butchery
+Person(user, "Customer", "Customer that gets meat from the butchery")
+System(system, "Butchery", "Allows customers to buy meat")
+Rel(user, system, "Tracks Customer information, meat bought and butchers that sold the meat")
+SHOW_LEGEND()
+@enduml
