@@ -1,18 +1,10 @@
-package com.butchery.customerservice.datalayer;
-
-import jakarta.persistence.Embeddable;
+package com.butchery.purchaseservice.datalayer;
 
 import java.util.UUID;
 
-@Embeddable
 public class CustomerIdentifier {
 
     private String customerId;
-
-    CustomerIdentifier(){
-        this.customerId = UUID.randomUUID().toString();
-    }
-
 
     public CustomerIdentifier(String customerId){
         this.customerId = customerId;

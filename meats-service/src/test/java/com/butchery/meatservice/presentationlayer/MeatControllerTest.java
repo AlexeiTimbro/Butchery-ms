@@ -2,6 +2,7 @@ package com.butchery.meatservice.presentationlayer;
 
 import com.butchery.meatservice.datalayer.Meat;
 import com.butchery.meatservice.datalayer.MeatRepository;
+import com.butchery.meatservice.datalayer.Status;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +22,7 @@ class MeatControllerTest {
     private final String BASE_URI_MEATS = "/api/v1/meats";
     private final String VALID_MEAT_ID="8098bbbb-5d02-443c-9112-9661282befe1";
     private final String VALID_ANIMAL = "Beef";
+    private final Status VALID_STATUS = Status.AVAILABLE;
     private final String VALID_ENVIRONMENT = "farm";
     private final String VALID_TEXTURE = "tender";
     private final String VALID_EXPIRATION_DATE = "24-08-2024";
@@ -50,16 +52,32 @@ class MeatControllerTest {
     }
 
     @Test
+    public void whenGetMeatWithValidMeatId_thenReturnMeat(){
+        webTestClient.get().uri(BASE_URI_MEATS + "/" + VALID_MEAT_ID).accept(MediaType.APPLICATION_JSON).exchange().expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON).expectBody()
+                .jsonPath("$.meatId").isEqualTo(VALID_MEAT_ID)
+                .jsonPath("$.animal").isEqualTo(VALID_ANIMAL)
+                .jsonPath("$.environment").isEqualTo(VALID_ENVIRONMENT)
+                .jsonPath("$.texture").isEqualTo(VALID_TEXTURE)
+                .jsonPath("$.expirationDate").isEqualTo(VALID_EXPIRATION_DATE)
+                .jsonPath("$.price").isEqualTo(VALID_PRICE);
+
+
+
+    }
+
+    @Test
     public void whenCreateMeatWithValidValues_thenReturnNewMeat(){
 
         //arrange
         String expectedAnimal = "Duck";
+        Status expectedStatus = Status.AVAILABLE;
         String expectedEnvironment = "Wild";
         String expectedTexture = "Super Tender";
         String expectedExpirationDate = "15-05-2026";
         Integer expectedPrice = 20;
 
-        MeatRequestModel meatRequestModel = new MeatRequestModel(expectedAnimal,expectedEnvironment,expectedTexture,expectedExpirationDate,expectedPrice);
+        MeatRequestModel meatRequestModel = new MeatRequestModel(expectedAnimal,expectedStatus,expectedEnvironment,expectedTexture,expectedExpirationDate,expectedPrice);
 
         //act and assert
         webTestClient.post()
@@ -70,13 +88,7 @@ class MeatControllerTest {
                 .exchange()
                 .expectStatus().isCreated()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
-                .expectBody()
-                .jsonPath("$.meatId").isNotEmpty()
-                .jsonPath("$.animal").isEqualTo(expectedAnimal)
-                .jsonPath("$.environment").isEqualTo(expectedEnvironment)
-                .jsonPath("$.texture").isEqualTo(expectedTexture)
-                .jsonPath("$.expirationDate").isEqualTo(expectedExpirationDate)
-                .jsonPath("$.price").isEqualTo(expectedPrice);
+                .expectBody(MeatResponseModel.class);
     }
 
     @Test
@@ -95,13 +107,14 @@ class MeatControllerTest {
     public void whenUpdateMeatWithValidValues_thenReturnUpdatedMeat() {
 
         //arrange
-        String expectedAnimal = "Duck";
-        String expectedEnvironment = "Wild";
-        String expectedTexture = "Super Tender";
-        String expectedExpirationDate = "15-05-2026";
-        Integer expectedPrice = 20;
+        String expectedAnimal = "Beef";
+        Status expectedStatus = Status.AVAILABLE;
+        String expectedEnvironment = "farm";
+        String expectedTexture = "tender";
+        String expectedExpirationDate = "24-08-2024";
+        Integer expectedPrice= 10;
 
-        MeatRequestModel meatRequestModel = new MeatRequestModel(expectedAnimal,expectedEnvironment,expectedTexture,expectedExpirationDate,expectedPrice);
+        MeatRequestModel meatRequestModel = new MeatRequestModel(expectedAnimal,expectedStatus,expectedEnvironment,expectedTexture,expectedExpirationDate,expectedPrice);
 
 
         //act and assert

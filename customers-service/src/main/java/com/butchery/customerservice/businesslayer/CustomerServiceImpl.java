@@ -45,7 +45,7 @@ public class CustomerServiceImpl implements CustomerService{
             throw new NotFoundException("Unknown Customer id");
         }
 
-        return customerResponseMapper.entityToResponseModel(customerRepository.findByCustomerIdentifier_CustomerId(customerId));
+        return customerResponseMapper.entityToResponseModel(customer);
     }
 
     @Override

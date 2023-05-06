@@ -16,18 +16,24 @@ public class Meat {
     private MeatIdentifier meatIdentifier;
 
     private String animal;
+
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
     private String environment;
     private String texture;
     private String expirationDate;
     private Integer price;
 
-    Meat(){
-        this.meatIdentifier = new MeatIdentifier();
+
+    public Meat(){
+
     }
 
-    public Meat(String animal, String environment, String texture, String expirationDate, Integer price) {
+    public Meat(String animal, Status status, String environment, String texture, String expirationDate, Integer price) {
         this.meatIdentifier = new MeatIdentifier();
         this.animal = animal;
+        this.status = status;
         this.environment = environment;
         this.texture = texture;
         this.expirationDate = expirationDate;

@@ -41,7 +41,7 @@ public class ButcherServiceImpl implements ButcherService{
             throw new NotFoundException("Unknown butcher id");
         }
 
-        return butcherResponseMapper.entityToResponseModel(butcherRepository.findButcherByButcherIdentifier_ButcherId(butcherId));
+        return butcherResponseMapper.entityToResponseModel(existingButcher);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.butchery.meatservice.utils;
 
 import com.butchery.meatservice.datalayer.MeatRepository;
+import com.butchery.meatservice.datalayer.Status;
 import com.butchery.meatservice.presentationlayer.MeatRequestModel;
 import com.butchery.meatservice.utils.exceptions.PriceLessOrEqualToZeroException;
 import com.fasterxml.jackson.databind.ser.Serializers;
@@ -23,6 +24,7 @@ class GlobalControllerExceptionHandlerTest {
 
     private final String BASE_URI_MEATS = "/api/v1/meats";
     private final String VALID_MEAT_ID="8098bbbb-5d02-443c-9112-9661282befe1";
+    private final Status VALID_STATUS = Status.AVAILABLE;
     private final String VALID_ANIMAL = "Beef";
     private final String VALID_ENVIRONMENT = "farm";
     private final String VALID_TEXTURE = "tender";
@@ -34,6 +36,7 @@ class GlobalControllerExceptionHandlerTest {
 
     @Autowired
     MeatRepository meatRepository;
+
 
     @Test
     public void whenMeatIdIsInvalidForGet_thenReturnInvalidMeatIdExceptionException() {
@@ -53,7 +56,7 @@ class GlobalControllerExceptionHandlerTest {
     @Test
     public void whenMeatIdIsInvalidForUpdate_thenReturnInvalidMeatIdExceptionException() {
 
-        MeatRequestModel meatRequestModel = new MeatRequestModel(VALID_ANIMAL,VALID_ENVIRONMENT,VALID_TEXTURE,VALID_EXPIRATION_DATE,VALID_PRICE);
+        MeatRequestModel meatRequestModel = new MeatRequestModel(VALID_ANIMAL,Status.AVAILABLE,VALID_ENVIRONMENT,VALID_TEXTURE,VALID_EXPIRATION_DATE,VALID_PRICE);
 
         String INVALID_MEAT_ID = VALID_MEAT_ID + 1;
 
@@ -78,7 +81,7 @@ class GlobalControllerExceptionHandlerTest {
         Integer INVALID_PRICE = -2;
 
         //arrange
-        MeatRequestModel meatRequestModel = new MeatRequestModel(VALID_ANIMAL,VALID_ENVIRONMENT,VALID_TEXTURE,VALID_EXPIRATION_DATE,INVALID_PRICE);
+        MeatRequestModel meatRequestModel = new MeatRequestModel(VALID_ANIMAL,VALID_STATUS,VALID_ENVIRONMENT,VALID_TEXTURE,VALID_EXPIRATION_DATE,INVALID_PRICE);
 
         //act and assert
         webTestClient.post()
@@ -100,7 +103,7 @@ class GlobalControllerExceptionHandlerTest {
         String INVALID_ANIMAL = null;
 
         //arrange
-        MeatRequestModel meatRequestModel = new MeatRequestModel(INVALID_ANIMAL,VALID_ENVIRONMENT,VALID_TEXTURE,VALID_EXPIRATION_DATE,VALID_PRICE);
+        MeatRequestModel meatRequestModel = new MeatRequestModel(INVALID_ANIMAL,VALID_STATUS,VALID_ENVIRONMENT,VALID_TEXTURE,VALID_EXPIRATION_DATE,VALID_PRICE);
 
         //act and assert
         webTestClient.post()
@@ -122,7 +125,7 @@ class GlobalControllerExceptionHandlerTest {
         String INVALID_ENVIRONMENT = null;
 
         //arrange
-        MeatRequestModel meatRequestModel = new MeatRequestModel(VALID_ANIMAL,INVALID_ENVIRONMENT,VALID_TEXTURE,VALID_EXPIRATION_DATE,VALID_PRICE);
+        MeatRequestModel meatRequestModel = new MeatRequestModel(VALID_ANIMAL,VALID_STATUS,INVALID_ENVIRONMENT,VALID_TEXTURE,VALID_EXPIRATION_DATE,VALID_PRICE);
 
         //act and assert
         webTestClient.post()
@@ -144,7 +147,7 @@ class GlobalControllerExceptionHandlerTest {
         String INVALID_TEXTURE = null;
 
         //arrange
-        MeatRequestModel meatRequestModel = new MeatRequestModel(VALID_ANIMAL,VALID_ENVIRONMENT,INVALID_TEXTURE,VALID_EXPIRATION_DATE,VALID_PRICE);
+        MeatRequestModel meatRequestModel = new MeatRequestModel(VALID_ANIMAL,VALID_STATUS,VALID_ENVIRONMENT,INVALID_TEXTURE,VALID_EXPIRATION_DATE,VALID_PRICE);
 
         //act and assert
         webTestClient.post()
@@ -166,7 +169,7 @@ class GlobalControllerExceptionHandlerTest {
         String INVALID_EXPIRATION_DATE = null;
 
         //arrange
-        MeatRequestModel meatRequestModel = new MeatRequestModel(VALID_ANIMAL,VALID_ENVIRONMENT,VALID_TEXTURE,INVALID_EXPIRATION_DATE,VALID_PRICE);
+        MeatRequestModel meatRequestModel = new MeatRequestModel(VALID_ANIMAL,VALID_STATUS,VALID_ENVIRONMENT,VALID_TEXTURE,INVALID_EXPIRATION_DATE,VALID_PRICE);
 
         //act and assert
         webTestClient.post()
@@ -188,7 +191,7 @@ class GlobalControllerExceptionHandlerTest {
         Integer INVALID_PRICE = null;
 
         //arrange
-        MeatRequestModel meatRequestModel = new MeatRequestModel(VALID_ANIMAL,VALID_ENVIRONMENT,VALID_TEXTURE,VALID_EXPIRATION_DATE,INVALID_PRICE);
+        MeatRequestModel meatRequestModel = new MeatRequestModel(VALID_ANIMAL,VALID_STATUS,VALID_ENVIRONMENT,VALID_TEXTURE,VALID_EXPIRATION_DATE,INVALID_PRICE);
 
         //act and assert
         webTestClient.post()
@@ -203,8 +206,6 @@ class GlobalControllerExceptionHandlerTest {
                 .isEqualTo("uri=" + BASE_URI_MEATS)
                 .jsonPath("$.message").isEqualTo("The price field is required.");
     }
-
-
 
 
 }

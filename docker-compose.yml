@@ -38,6 +38,14 @@ services:
       mysql3:
         condition: service_healthy
 
+  purchases-service:
+    build: purchases-service
+    hostname: purchases-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - mongodb
+
   mysql1:
     image: mysql:5.7
     ports:

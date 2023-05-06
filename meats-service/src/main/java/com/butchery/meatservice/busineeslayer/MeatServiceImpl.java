@@ -1,6 +1,7 @@
 package com.butchery.meatservice.busineeslayer;
 
 import com.butchery.meatservice.datalayer.Meat;
+import com.butchery.meatservice.datalayer.MeatIdentifier;
 import com.butchery.meatservice.datalayer.MeatRepository;
 import com.butchery.meatservice.datamapperlayer.MeatRequestMapper;
 import com.butchery.meatservice.datamapperlayer.MeatResponseMapper;
@@ -39,7 +40,7 @@ public class MeatServiceImpl implements MeatService {
             throw new NotFoundException("Unknown Meat id.");
         }
 
-        return meatResponseMapper.entityToResponseModel(meatRepository.findMeatByMeatIdentifier_MeatId(meatId));
+        return meatResponseMapper.entityToResponseModel(existingMeat);
     }
 
     @Override
@@ -72,6 +73,7 @@ public class MeatServiceImpl implements MeatService {
         }
 
         Meat meat = meatRequestMapper.requestModelToEntity1(meatRequestModel);
+        meat.setMeatIdentifier(new MeatIdentifier());
 
         return meatResponseMapper.entityToResponseModel(meatRepository.save(meat));
     }
@@ -83,37 +85,6 @@ public class MeatServiceImpl implements MeatService {
         if (existingMeat == null) {
             throw new NotFoundException("Unknown Meat id.");
         }
-
-        String animal = meatRequestModel.getAnimal();
-        String environment = meatRequestModel.getEnvironment();
-        String texture = meatRequestModel.getTexture();
-        String expirationDate = meatRequestModel.getExpirationDate();
-        Integer price = meatRequestModel.getPrice();
-
-        /*
-        if (animal == null || animal.isBlank()) {
-            throw new ThisFieldIsRequiredException("The animal field is required.");
-        }
-        if (environment == null || environment.isBlank()) {
-            throw new ThisFieldIsRequiredException("The Environment field is required.");
-        }
-        if (texture == null || texture.isBlank()) {
-            throw new ThisFieldIsRequiredException("The Texture field is required.");
-        }
-        if (expirationDate == null || expirationDate.isBlank()) {
-            throw new ThisFieldIsRequiredException("The Expiration date field is required.");
-        }
-        if (price == null) {
-            throw new ThisFieldIsRequiredException("The price field is required.");
-        }
-
-
-
-        if(price <= 0){
-            throw new PriceLessOrEqualToZeroException("The price needs to be higher then 0.");
-        }
-
-         */
 
         Meat meat = meatRequestMapper.requestModelToEntity1(meatRequestModel);
         meat.setId(existingMeat.getId());

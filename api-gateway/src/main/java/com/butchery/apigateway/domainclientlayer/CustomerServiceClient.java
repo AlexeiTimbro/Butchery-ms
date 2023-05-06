@@ -101,11 +101,11 @@ public class CustomerServiceClient {
 
             return customerResponseModel;
         }
-
         catch(HttpClientErrorException ex){
             log.debug("5. Received in API-Gateway CustomerServiceClient addCustomer with exception: " + ex.getMessage());
             throw handleHttpClientException(ex);
         }
+
     }
 
     public CustomerResponseModel updateCustomer(CustomerRequestModel customerRequestModel, String customerId){

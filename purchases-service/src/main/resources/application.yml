@@ -8,6 +8,24 @@ logging:
   level:
     root: INFO
     com.butchery: DEBUG
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+
+spring:
+  data:
+    mongodb:
+      username: user
+      password: pwd
+      host: localhost
+      port: 27017
+      database: purchases-db
+      authentication-database: admin
+      auto-index-creation: true
+
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 5.0.5
 
 app:
   customers-service:
@@ -26,8 +44,7 @@ spring:
     activate:
       on-profile: docker
 
-server:
-  port: 8080
+spring.data.mongodb.host: mongodb
 
 app:
   customers-service:
@@ -39,4 +56,8 @@ app:
   butchers-service:
     host: butchers-service
     port: 8080
+
+server.port: 8080
+
+
 
