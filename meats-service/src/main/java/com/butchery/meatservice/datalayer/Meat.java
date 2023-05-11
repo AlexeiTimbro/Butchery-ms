@@ -23,14 +23,14 @@ public class Meat {
     private String environment;
     private String texture;
     private String expirationDate;
-    private Integer price;
+    private Double price;
 
 
     public Meat(){
 
     }
 
-    public Meat(String animal, Status status, String environment, String texture, String expirationDate, Integer price) {
+    public Meat(String animal, Status status, String environment, String texture, String expirationDate, Double price) {
         this.meatIdentifier = new MeatIdentifier();
         this.animal = animal;
         this.status = status;

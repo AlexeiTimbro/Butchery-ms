@@ -1,16 +1,15 @@
 package com.butchery.purchaseservice.domainclientlayer.meat;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.hateoas.RepresentationModel;
+import lombok.Builder;
+import lombok.Value;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class MeatResponseModel {
+@Value
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class MeatRequestModel {
 
-    private String meatId;
     private String animal;
     private Status status;
     private String environment;

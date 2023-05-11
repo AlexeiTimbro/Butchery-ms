@@ -1,6 +1,5 @@
 package com.butchery.purchaseservice.datalayer;
 
-
 import java.util.UUID;
 
 public class ButcherIdentifier {

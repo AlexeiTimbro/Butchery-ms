@@ -22,7 +22,7 @@ class MeatRepositoryTest {
     @BeforeEach
     public void setup(){
         meatRepository.deleteAll();
-        preSavedMeat = meatRepository.save(new Meat("Duck",Status.AVAILABLE, "Wild", "Super Tender", "15-05-2026", 20));
+        preSavedMeat = meatRepository.save(new Meat("Duck",Status.AVAILABLE, "Wild", "Super Tender", "15-05-2026", 20.80));
     }
     @Test
     public void saveNewMeat_shouldSucceed(){
@@ -33,7 +33,7 @@ class MeatRepositoryTest {
         String expectedEnvironment = "Wild";
         String expectedTexture = "Super Tender";
         String expectedExpirationDate = "15-05-2026";
-        Integer expectedPrice = 20;
+        Double expectedPrice = 20.34;
 
         Meat newMeat= new Meat(expectedAnimal,Status.AVAILABLE, expectedEnvironment,expectedTexture,expectedExpirationDate,expectedPrice);
 

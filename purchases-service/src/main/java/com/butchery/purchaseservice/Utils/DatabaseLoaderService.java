@@ -1,5 +1,6 @@
 package com.butchery.purchaseservice.Utils;
 
+import com.butchery.purchaseservice.datalayer.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -8,82 +9,64 @@ import java.time.LocalDate;
 
 @Component
 public class DatabaseLoaderService implements CommandLineRunner {
-    @Override
-    public void run(String... args) throws Exception {
-
-    }
-/*
 
     @Autowired
-    PurchaseOrderRepository purchaseOrderRepository;
+    PurchaseRepository purchaseRepository;
 
     @Override
     public void run(String... args) throws Exception {
 
-        var purchaseIdentifier1 = new PurchaseOrderIdentifier();
-        var vehicleIdentifier1 = new VehicleIdentifier("JN8AS5MTXDW375966");
-        var clientIdentifier1 = new ClientIdentifier("c3540a89-cb47-4c96-888e-ff96708db4d8");
-        var employeeIdentifier1 = new EmployeeIdentifier("efaa2e89-9e09-4183-a509-a8a65eb55495");
-        var inventoryIdentifier1 = new InventoryIdentifier("d846a5a7-2e1c-4c79-809c-4f3f471e826d");
+        var purchaseIdentifier1 = new PurchaseIdentifier();
+        var customerIdentifier1 = new CustomerIdentifier("c3540a89-cb47-4c96-888e-ff96708db4d8");
+        var meatIdentifier1 = new MeatIdentifier("9034bbbb-5d02-443c-9112-9661282befe1");
+        var butcherIdentifier1 = new ButcherIdentifier("075d5fae-9c99-42f0-91c6-f4ec3d256af9");
 
-        var financingAgreement1 = FinancingAgreementDetails.builder()
-                .monthlyPaymentAmount(858.34)
-                .numberOfMonthlyPayments(60)
-                .downPaymentAmount(15000.00)
+        var purchase1 = Purchase.builder()
+                .purchaseIdentifier(purchaseIdentifier1)
+                .customerIdentifier(customerIdentifier1)
+                .meatIdentifier(meatIdentifier1)
+                .butcherIdentifier(butcherIdentifier1)
+                .butcherFirstName("Lynsey")
+                .butcherLastName("Reedie")
+                .customerFirstName("Patrick")
+                .customerLastName("Bateman")
+                .salePrice(20.45)
+                .purchaseStatus(PurchaseStatus.PURCHASE_CANCELLED)
+                .animal("Chicken")
+                .environment("farm")
+                .texture("tender")
+                .expirationDate("24-08-2024")
+                .paymentMethod(PaymentMethod.CREDIT)
+                .purchaseDate(LocalDate.of(2023, 04, 10))
                 .build();
 
-        var purchaseOrder1 = PurchaseOrder.builder()
-                .purchaseOrderIdentifier(purchaseIdentifier1)
-                .vehicleIdentifier(vehicleIdentifier1)
-                .clientIdentifier(clientIdentifier1)
-                .employeeIdentifier(employeeIdentifier1)
-                .inventoryIdentifier(inventoryIdentifier1)
-                .employeeFirstName("Dorry")
-                .employeeLastName("Gepp")
-                .clientFirstName("Alick")
-                .clientLastName("Ucceli")
-                .salePrice(66500.00)
-                .status(Status.PURCHASE_COMPLETED)
-                .financingAgreementDetails(financingAgreement1)
-                .purchaseOfferDate(LocalDate.of(2023, 04, 10))
-                .vehicleMake("Nissan")
-                .vehicleModel("Rogue")
+        //second purchase
+        var purchaseIdentifier2 = new PurchaseIdentifier();
+        var customerIdentifier2 = new CustomerIdentifier("c4540a89-cb47-4c96-888e-tt96708db4d8");
+        var meatIdentifier2 = new MeatIdentifier("4444bbbb-5d02-443c-9112-9661282befe1");
+        var butcherIdentifier2 = new ButcherIdentifier("77a89826-3777-4e37-8dd8-6fa31e62790d");
+
+        var purchase2 = Purchase.builder()
+                .purchaseIdentifier(purchaseIdentifier2)
+                .customerIdentifier(customerIdentifier2)
+                .meatIdentifier(meatIdentifier2)
+                .butcherIdentifier(butcherIdentifier2)
+                .butcherFirstName("Shanan")
+                .butcherLastName("Sterzaker")
+                .customerFirstName("Low")
+                .customerLastName("Tutolar")
+                .salePrice(35.45)
+                .purchaseStatus(PurchaseStatus.PURCHASE_COMPLETED)
+                .animal("Porc")
+                .environment("farm")
+                .texture("soft")
+                .expirationDate("24-08-2024")
+                .paymentMethod(PaymentMethod.DEBIT)
+                .purchaseDate(LocalDate.of(2023, 06, 12))
                 .build();
 
-        //second purchase order
-        var purchaseIdentifier2=new PurchaseOrderIdentifier();
-        var vehicleIdentifier2=new VehicleIdentifier("WBAYA8C50FG933061");
-        var clientIdentifier2=new ClientIdentifier("dd1ab8b0-ab17-4e03-b70a-84caa3871606");
-        var employeeIdentifier2=new EmployeeIdentifier("6d8e5f5b-8350-40ed-ac06-e484498f4f41");
-        var inventoryIdentifier2=new InventoryIdentifier("3fe5c169-c1ef-42ea-9e5e-870f30ba9dd0");
-
-        var financingAgreement2=FinancingAgreementDetails.builder()
-                .monthlyPaymentAmount(1833.34)
-                .numberOfMonthlyPayments(18)
-                .downPaymentAmount(10000.00)
-                .build();
-
-        var purchaseOrder2=PurchaseOrder.builder()
-                .purchaseOrderIdentifier(purchaseIdentifier2)
-                .vehicleIdentifier(vehicleIdentifier2)
-                .clientIdentifier(clientIdentifier2)
-                .employeeIdentifier(employeeIdentifier2)
-                .inventoryIdentifier(inventoryIdentifier2)
-                .employeeFirstName("Vikki")
-                .employeeLastName("Wymer")
-                .clientFirstName("Rickie")
-                .clientLastName("Presslie")
-                .salePrice(43000.00)
-                .status(Status.PURCHASE_NEGOTIATION)
-                .financingAgreementDetails(financingAgreement2)
-                .purchaseOfferDate(LocalDate.of(2023,04,18))
-                .vehicleMake("BMW")
-                .vehicleModel("750 / ALPINA B7")
-                .build();
-
-        purchaseOrderRepository.insert(purchaseOrder1);
-        purchaseOrderRepository.insert(purchaseOrder2);
+        purchaseRepository.insert(purchase1);
+        purchaseRepository.insert(purchase2);
     }
-
- */
 }
+

@@ -14,5 +14,5 @@ public class MeatResponseModel extends RepresentationModel<MeatResponseModel> {
     private String environment;
     private String texture;
     private String expirationDate;
-    private Integer price;
+    private Double price;
 }

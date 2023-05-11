@@ -75,7 +75,7 @@ class MeatControllerTest {
         String expectedEnvironment = "Wild";
         String expectedTexture = "Super Tender";
         String expectedExpirationDate = "15-05-2026";
-        Integer expectedPrice = 20;
+        Double expectedPrice = 20.45;
 
         MeatRequestModel meatRequestModel = new MeatRequestModel(expectedAnimal,expectedStatus,expectedEnvironment,expectedTexture,expectedExpirationDate,expectedPrice);
 
@@ -112,7 +112,7 @@ class MeatControllerTest {
         String expectedEnvironment = "farm";
         String expectedTexture = "tender";
         String expectedExpirationDate = "24-08-2024";
-        Integer expectedPrice= 10;
+        Double expectedPrice= 10.45;
 
         MeatRequestModel meatRequestModel = new MeatRequestModel(expectedAnimal,expectedStatus,expectedEnvironment,expectedTexture,expectedExpirationDate,expectedPrice);
 

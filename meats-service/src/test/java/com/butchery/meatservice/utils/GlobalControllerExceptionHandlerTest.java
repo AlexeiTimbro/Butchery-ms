@@ -3,8 +3,6 @@ package com.butchery.meatservice.utils;
 import com.butchery.meatservice.datalayer.MeatRepository;
 import com.butchery.meatservice.datalayer.Status;
 import com.butchery.meatservice.presentationlayer.MeatRequestModel;
-import com.butchery.meatservice.utils.exceptions.PriceLessOrEqualToZeroException;
-import com.fasterxml.jackson.databind.ser.Serializers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +12,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment= RANDOM_PORT)
@@ -29,7 +26,7 @@ class GlobalControllerExceptionHandlerTest {
     private final String VALID_ENVIRONMENT = "farm";
     private final String VALID_TEXTURE = "tender";
     private final String VALID_EXPIRATION_DATE = "24-08-2024";
-    private final Integer VALID_PRICE = 10;
+    private final Double VALID_PRICE = 10.34;
 
     @Autowired
     WebTestClient webTestClient;
@@ -78,7 +75,7 @@ class GlobalControllerExceptionHandlerTest {
     @Test
     public void whenPriceIsLessOrEqualToZeroForPOST_thenReturnPriceIsLessOrEqualToZeroException() {
 
-        Integer INVALID_PRICE = -2;
+        Double INVALID_PRICE = -2.34;
 
         //arrange
         MeatRequestModel meatRequestModel = new MeatRequestModel(VALID_ANIMAL,VALID_STATUS,VALID_ENVIRONMENT,VALID_TEXTURE,VALID_EXPIRATION_DATE,INVALID_PRICE);
@@ -188,7 +185,7 @@ class GlobalControllerExceptionHandlerTest {
     @Test
     public void whenPriceFieldIsNullForPOST_thenReturnThisFieldIsRequiredException() {
 
-        Integer INVALID_PRICE = null;
+        Double INVALID_PRICE = null;
 
         //arrange
         MeatRequestModel meatRequestModel = new MeatRequestModel(VALID_ANIMAL,VALID_STATUS,VALID_ENVIRONMENT,VALID_TEXTURE,VALID_EXPIRATION_DATE,INVALID_PRICE);

@@ -1,17 +1,16 @@
-package com.butchery.customerservice.presentationlayer;
+package com.butchery.purchaseservice.domainclientlayer.customer;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;
 
-
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper=false)
-public class CustomerResponseModel extends RepresentationModel<CustomerResponseModel> {
+public class CustomerResponseModel {
 
-    public CustomerResponseModel(){
-
-    }
     private String customerId;
     private String firstName;
     private String lastName;

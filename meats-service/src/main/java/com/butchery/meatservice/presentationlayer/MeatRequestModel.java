@@ -1,7 +1,6 @@
 package com.butchery.meatservice.presentationlayer;
 
 import com.butchery.meatservice.datalayer.Status;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
@@ -16,5 +15,5 @@ public class MeatRequestModel {
     private String environment;
     private String texture;
     private String expirationDate;
-    private Integer price;
+    private Double price;
 }

@@ -32,6 +32,7 @@ public class Customer {
         this.customerIdentifier = new CustomerIdentifier();
     }
 
+
     public Customer(String firstName, String lastName, String email,String phoneNumber, String street, String city, String province, String country, String postalCode) {
         this.customerIdentifier = new CustomerIdentifier();
         this.firstName = firstName;

@@ -9,6 +9,6 @@ create table if not exists meats (
     environment VARCHAR(50),
     texture VARCHAR(50),
     expiration_date VARCHAR(75),
-    price INTEGER(200)
+    price DOUBLE(40,2)
 
     );

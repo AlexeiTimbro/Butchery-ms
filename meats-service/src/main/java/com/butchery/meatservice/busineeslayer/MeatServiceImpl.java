@@ -50,7 +50,7 @@ public class MeatServiceImpl implements MeatService {
         String environment = meatRequestModel.getEnvironment();
         String texture = meatRequestModel.getTexture();
         String expirationDate = meatRequestModel.getExpirationDate();
-        Integer price = meatRequestModel.getPrice();
+        Double price = meatRequestModel.getPrice();
 
         if (animal == null || animal.isBlank()) {
             throw new ThisFieldIsRequiredException("The animal field is required.");
