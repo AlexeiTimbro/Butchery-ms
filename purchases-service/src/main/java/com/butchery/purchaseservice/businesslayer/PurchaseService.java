@@ -7,6 +7,14 @@ import java.util.List;
 
 public interface PurchaseService {
 
-    List<PurchaseResponseModel> getAllPurchase();
+    List<PurchaseResponseModel> getAllPurchaseAggregate();
+
+    PurchaseResponseModel getPurchaseByPurchaseIdAggregate(String purchaseId);
+
     PurchaseResponseModel processCustomerPurchase(PurchaseRequestModel purchaseRequestModel, String customerId);
+
+    PurchaseResponseModel updateCustomerPurchase(PurchaseRequestModel purchaseRequestModel,String customerId,String purchaseId);
+
+    void deletePurchaseAggregate(String purchaseId);
+
 }

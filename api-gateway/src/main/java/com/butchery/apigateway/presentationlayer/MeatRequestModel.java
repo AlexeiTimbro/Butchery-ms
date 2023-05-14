@@ -8,6 +8,7 @@ import lombok.Value;
 import org.springframework.hateoas.RepresentationModel;
 
 @Data
+@Builder
 @AllArgsConstructor
 public class MeatRequestModel extends RepresentationModel<MeatRequestModel> {
 
@@ -17,4 +18,5 @@ public class MeatRequestModel extends RepresentationModel<MeatRequestModel> {
     String texture;
     String expirationDate;
     Integer price;
+
 }

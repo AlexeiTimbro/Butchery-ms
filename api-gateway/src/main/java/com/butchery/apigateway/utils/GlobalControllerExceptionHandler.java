@@ -29,7 +29,7 @@ public class GlobalControllerExceptionHandler {
 
     @ResponseStatus(UNPROCESSABLE_ENTITY)
     @ExceptionHandler(ButcherIsTooYoungException.class)
-    public HttpErrorInfo handleInvalidAgeException(WebRequest request, Exception ex) {
+    public HttpErrorInfo handleButcherIsTooYoungException(WebRequest request, Exception ex) {
         return createHttpErrorInfo(UNPROCESSABLE_ENTITY, request, ex);
     }
 
@@ -41,7 +41,7 @@ public class GlobalControllerExceptionHandler {
 
     @ResponseStatus(UNPROCESSABLE_ENTITY)
     @ExceptionHandler(PriceLessOrEqualToZeroException.class)
-    public HttpErrorInfo handleInvalidInputException(WebRequest request, Exception ex) {
+    public HttpErrorInfo handlePriceIsLessOrEqualToZeroException(WebRequest request, Exception ex) {
         return createHttpErrorInfo(UNPROCESSABLE_ENTITY, request, ex);
     }
 

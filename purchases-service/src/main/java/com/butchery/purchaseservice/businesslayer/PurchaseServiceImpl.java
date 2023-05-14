@@ -33,10 +33,23 @@ public class PurchaseServiceImpl implements PurchaseService {
 
 
     @Override
-    public List<PurchaseResponseModel> getAllPurchase() {
+    public List<PurchaseResponseModel> getAllPurchaseAggregate() {
         List<Purchase> purchases = purchaseRepository.findAll();
         return purchaseResponseModelMapper.entityListToResponseModelList(purchases);
     }
+
+    @Override
+    public PurchaseResponseModel getPurchaseByPurchaseIdAggregate(String purchaseId) {
+        Purchase purchase = purchaseRepository.findPurchaseByPurchaseIdentifier_PurchaseId(purchaseId);
+
+        if(purchase == null) {
+            throw new NotFoundException("Unknown purchaseId provided");
+        }
+
+        return purchaseResponseModelMapper.entityToResponseModel(purchase);
+
+    }
+
 
     @Override
     public PurchaseResponseModel processCustomerPurchase(PurchaseRequestModel purchaseRequestModel, String customerId) {
@@ -113,4 +126,82 @@ public class PurchaseServiceImpl implements PurchaseService {
         return purchaseResponseModelMapper.entityToResponseModel(saved);
 
     }
+
+    @Override
+    public PurchaseResponseModel updateCustomerPurchase(PurchaseRequestModel purchaseRequestModel,String customerId, String purchaseId) {
+
+        CustomerResponseModel customerResponseModel = customerServiceClient.getCustomerByCustomerId(customerId);
+        if(customerResponseModel == null) {
+            throw new NotFoundException("Unknown customerId provided: "+ customerId);
+        }
+
+        MeatResponseModel meatResponseModel = meatServiceClient.getMeatByMeatId(purchaseRequestModel.getMeatId());
+        if(meatResponseModel == null) {
+            throw new NotFoundException("Unknown employeeId provided: "+ purchaseRequestModel.getMeatId());
+        }
+
+        ButcherResponseModel butcherResponseModel = butcherServiceClient.getButcherByButcherId(purchaseRequestModel.getButcherId());
+        if(butcherResponseModel == null) {
+            throw new NotFoundException("Vehicle with vehicleId: "+ purchaseRequestModel.getButcherId());
+        }
+
+        Purchase existingPurchase = purchaseRepository.findPurchaseByPurchaseIdentifier_PurchaseId(purchaseId);
+
+
+
+        existingPurchase.setCustomerIdentifier(new CustomerIdentifier(customerResponseModel.getCustomerId()));
+        existingPurchase.setMeatIdentifier(new MeatIdentifier(meatResponseModel.getMeatId()));
+        existingPurchase.setButcherIdentifier(new ButcherIdentifier(butcherResponseModel.getButcherId()));
+        existingPurchase.setButcherFirstName(butcherResponseModel.getFirstName());
+        existingPurchase.setButcherLastName(butcherResponseModel.getLastName());
+        existingPurchase.setCustomerFirstName(customerResponseModel.getFirstName());
+        existingPurchase.setCustomerLastName(customerResponseModel.getLastName());
+        existingPurchase.setSalePrice(purchaseRequestModel.getSalePrice());
+        existingPurchase.setPurchaseStatus(purchaseRequestModel.getPurchaseStatus());
+        existingPurchase.setAnimal(meatResponseModel.getAnimal());
+        existingPurchase.setEnvironment(meatResponseModel.getEnvironment());
+        existingPurchase.setTexture(meatResponseModel.getTexture());
+        existingPurchase.setExpirationDate(meatResponseModel.getExpirationDate());
+        existingPurchase.setPaymentMethod(purchaseRequestModel.getPaymentMethod());
+        existingPurchase.setPurchaseDate(purchaseRequestModel.getPurchaseDate());
+
+
+        Purchase updatedPurchase = purchaseRepository.save(existingPurchase);
+
+        Status meatStatus = Status.AVAILABLE;
+        switch(updatedPurchase.getPurchaseStatus()) {
+            case PURCHASE_COMPLETED -> meatStatus = Status.SOLD;
+            case PURCHASE_CANCELLED -> meatStatus = Status.AVAILABLE;
+        }
+
+        MeatRequestModel meatRequestModel = MeatRequestModel.builder()
+                .animal(meatResponseModel.getAnimal())
+                .status(meatStatus)
+                .environment(meatResponseModel.getEnvironment())
+                .texture(meatResponseModel.getTexture())
+                .expirationDate(meatResponseModel.getExpirationDate())
+                .price(meatResponseModel.getPrice())
+                .build();
+
+        meatServiceClient.updateMeatStatus(meatRequestModel, meatResponseModel.getMeatId());
+
+        return purchaseResponseModelMapper.entityToResponseModel(updatedPurchase);
+
+    }
+
+    @Override
+    public void deletePurchaseAggregate(String purchaseId) {
+
+            Purchase existingPurchase = purchaseRepository.findPurchaseByPurchaseIdentifier_PurchaseId(purchaseId);
+
+
+        if(existingPurchase == null){
+
+                throw new NotFoundException("No SupervisorConfirmation assigned to this supervisorConfirmationId");
+            }else{
+                purchaseRepository.delete(existingPurchase);
+            }
+    }
+
 }
+

@@ -3,10 +3,9 @@ package com.butchery.purchaseservice.presentationlayer;
 import com.butchery.purchaseservice.businesslayer.PurchaseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,6 +19,19 @@ public class PurchaseController {
 
     @GetMapping()
     ResponseEntity <List<PurchaseResponseModel>> getAllPurchases(){
-        return ResponseEntity.ok().body(purchaseService.getAllPurchase());
+        return ResponseEntity.ok().body(purchaseService.getAllPurchaseAggregate());
     }
+
+    @GetMapping("/{purchaseId}")
+    ResponseEntity <PurchaseResponseModel> getAllPurchaseById(@PathVariable String purchaseId){
+        return ResponseEntity.ok().body(purchaseService.getPurchaseByPurchaseIdAggregate(purchaseId));
+    }
+
+    @DeleteMapping("/{purchaseId}")
+    ResponseEntity<Void>removeButcher(@PathVariable String purchaseId) {
+        purchaseService.deletePurchaseAggregate(purchaseId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+
 }

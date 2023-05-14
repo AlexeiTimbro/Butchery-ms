@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("api/v1/customers/{customerId}/purchases")
@@ -14,6 +16,11 @@ import org.springframework.web.bind.annotation.*;
 public class CustomerPurchaseController {
 
     private final PurchaseService purchaseService;
+
+    @GetMapping()
+    ResponseEntity <List<PurchaseResponseModel>> getAllPurchases(){
+        return ResponseEntity.ok().body(purchaseService.getAllPurchaseAggregate());
+    }
 
     @PostMapping()
     ResponseEntity<PurchaseResponseModel> processCustomerPurchase(
@@ -24,4 +31,12 @@ public class CustomerPurchaseController {
                 .body(purchaseService.processCustomerPurchase(purchaseRequestModel,customerId));
     }
 
+    @PutMapping("/{purchaseId}")
+    ResponseEntity<PurchaseResponseModel> updateCustomerPurchase(
+            @RequestBody PurchaseRequestModel purchaseRequestModel,
+            @PathVariable String customerId,
+            @PathVariable String purchaseId){
+
+        return ResponseEntity.ok().body(purchaseService.updateCustomerPurchase(purchaseRequestModel,customerId,purchaseId));
+    }
 }

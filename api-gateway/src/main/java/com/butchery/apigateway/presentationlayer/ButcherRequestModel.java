@@ -7,6 +7,7 @@ import lombok.Value;
 import org.springframework.hateoas.RepresentationModel;
 
 @Data
+@Builder
 @AllArgsConstructor
 public class ButcherRequestModel extends RepresentationModel<ButcherRequestModel> {
 

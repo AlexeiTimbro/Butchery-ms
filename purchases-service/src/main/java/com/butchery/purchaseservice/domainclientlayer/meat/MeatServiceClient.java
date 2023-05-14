@@ -85,8 +85,6 @@ public class MeatServiceClient {
     }
 
 
-
-
     private String getErrorMessage(HttpClientErrorException ex) {
         try {
             return mapper.readValue(ex.getResponseBodyAsString(), HttpErrorInfo.class).getMessage();
