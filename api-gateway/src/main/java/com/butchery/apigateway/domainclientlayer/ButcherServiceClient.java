@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -40,10 +41,9 @@ public class ButcherServiceClient {
 
     }
 
-    //INVENTORY CRUD OPERATION
+    //CRUD OPERATION
 
     public List<ButcherResponseModel> getAllButchers(){
-        log.debug("3. Received in API-Gateway ButcherServiceClient getAllButchers.");
 
         try{
             String url = BUTCHER_SERVICE_BASE_URL;
@@ -55,13 +55,11 @@ public class ButcherServiceClient {
         }
 
         catch(HttpClientErrorException ex){
-            log.debug("5. Received in API-Gateway ButcherServiceClient getAllButchers with exception: " + ex.getMessage());
             throw handleHttpClientException(ex);
         }
     }
 
     public ButcherResponseModel getButcherByButcherId(String butcherId){
-        log.debug("3. Received in API-Gateway ButcherServiceClient getButcherByButcherId with butcherId: " + butcherId);
 
         try{
             String url = BUTCHER_SERVICE_BASE_URL +"/" + butcherId;
@@ -69,84 +67,60 @@ public class ButcherServiceClient {
             ButcherResponseModel butcherResponseModel = restTemplate
                     .getForObject(url, ButcherResponseModel.class);
 
-
-            log.debug("5. Received in API-Gateway ButcherServiceClient getButcherByButcherId with ButcherResponseModel: "
-                    + butcherResponseModel.getButcherId());
-
-
             return butcherResponseModel;
         }
 
         catch(HttpClientErrorException ex){
-            log.debug("5. Received in API-Gateway ButcherServiceClient getButcherByButcherId with exception: " + ex.getMessage());
             throw handleHttpClientException(ex);
         }
     }
 
     public ButcherResponseModel addButcher(ButcherRequestModel butcherRequestModel){
 
-        log.debug("3. Received in API-Gateway ButcherServiceClient addButcher.");
 
         try{
             String url = BUTCHER_SERVICE_BASE_URL;
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            HttpEntity<ButcherRequestModel> requestEntity = new HttpEntity<>(butcherRequestModel, headers);
-
             ButcherResponseModel butcherResponseModel =
-                    restTemplate.postForObject(url, requestEntity, ButcherResponseModel.class);
+                    restTemplate.postForObject(url, butcherRequestModel, ButcherResponseModel.class);
 
             return butcherResponseModel;
         }
 
         catch(HttpClientErrorException ex){
-            log.debug("5. Received in API-Gateway ButcherServiceClient addButcher with exception: " + ex.getMessage());
             throw handleHttpClientException(ex);
         }
     }
 
     public ButcherResponseModel updateButcher(ButcherRequestModel butcherRequestModel, String butcherId){
-        log.debug("3. Received in API-Gateway ButcherServiceClient updateButcher with butcherId: " + butcherId);
 
         try{
             String url = BUTCHER_SERVICE_BASE_URL +"/" + butcherId;
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<ButcherRequestModel> requestEntity = new HttpEntity<>(butcherRequestModel, headers);
-
-            restTemplate.put(url, requestEntity, butcherId);
+            restTemplate.put(url, butcherRequestModel, butcherId);
 
             ButcherResponseModel butcherResponseModel = restTemplate
                     .getForObject(url, ButcherResponseModel.class);
 
-
-            log.debug("5. Received in API-Gateway ButcherServiceClient updateButcher with ButcherResponseModel: "
-                    + butcherResponseModel.getButcherId());
+            //restTemplate.execute(url, HttpMethod.PUT, requestCallback(clientRequestModel), clientHttpResponse -> null);
 
             return butcherResponseModel;
         }
 
         catch(HttpClientErrorException ex){
-            log.debug("5. Received in API-Gateway ButcherServiceClient updateButcher with exception: " + ex.getMessage());
             throw handleHttpClientException(ex);
         }
     }
 
     public void deleteButcher(String butcherId) {
-        log.debug("3. Received in API-Gateway ButcherServiceClient deleteButcher with butcherId: " + butcherId);
 
         try {
             String url = BUTCHER_SERVICE_BASE_URL + "/" + butcherId;
 
             restTemplate.delete(url);
 
-            log.debug("5. Successfully deleted butcher with id: " + butcherId);
         } catch (HttpClientErrorException ex) {
-            log.debug("5. Received in API-Gateway ButcherServiceClient deleteButcher with exception: " + ex.getMessage());
             throw handleHttpClientException(ex);
         }
     }
@@ -163,7 +137,7 @@ public class ButcherServiceClient {
         }
     }
 
-    private RuntimeException handleHttpClientException(HttpClientErrorException ex) {
+    public RuntimeException handleHttpClientException(HttpClientErrorException ex) {
         //include all possible responses from the client
 
         if (ex.getStatusCode() == NOT_FOUND) {
@@ -175,9 +149,6 @@ public class ButcherServiceClient {
         if (ex.getStatusCode() == UNPROCESSABLE_ENTITY) {
             return new ButcherIsTooYoungException(getErrorMessage(ex));
         }
-        log.warn("Got a unexpected HTTP error: {}, will rethrow it", ex.getStatusCode());
-        log.warn("Error body: {}", ex.getResponseBodyAsString());
         return ex;
     }
-
 }

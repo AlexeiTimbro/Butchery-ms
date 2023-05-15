@@ -1,0 +1,32 @@
+package com.butchery.apigateway.presentationlayer;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
+public class PurchaseResponseModel {
+
+    private String purchaseId;
+    private String customerId;
+    private String meatId;
+    private String butcherId;
+    private String butcherFirstName;
+    private String butcherLastName;
+    private String customerFirstName;
+    private String customerLastName;
+    private Double salePrice;
+    private PurchaseStatus purchaseStatus;
+    private String animal;
+    private String environment;
+    private String texture;
+    private String expirationDate;
+    private PaymentMethod paymentMethod;
+    private LocalDate purchaseDate;
+}

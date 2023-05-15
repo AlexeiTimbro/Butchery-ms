@@ -2,6 +2,7 @@ package com.butchery.purchaseservice.Utils;
 
 import com.butchery.purchaseservice.Utils.Exceptions.InvalidInputException;
 import com.butchery.purchaseservice.Utils.Exceptions.NotFoundException;
+import com.butchery.purchaseservice.Utils.Exceptions.PurchaseDateIsNotValid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,6 +27,12 @@ public class GlobalControllerExceptionHandler {
     @ResponseStatus(UNPROCESSABLE_ENTITY)
     @ExceptionHandler(InvalidInputException.class)
     public HttpErrorInfo handleInvalidInputException(WebRequest request, Exception ex) {
+        return createHttpErrorInfo(UNPROCESSABLE_ENTITY, request, ex);
+    }
+
+    @ResponseStatus(UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(PurchaseDateIsNotValid.class)
+    public HttpErrorInfo handlePurchaseDateIsNotValidException(WebRequest request, Exception ex) {
         return createHttpErrorInfo(UNPROCESSABLE_ENTITY, request, ex);
     }
 

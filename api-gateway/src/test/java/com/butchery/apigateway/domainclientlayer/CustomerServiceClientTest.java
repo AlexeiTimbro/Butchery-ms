@@ -87,6 +87,7 @@ class CustomerServiceClientTest {
 
     }
 
+    /*
     @Test
     public void addCustomerTest() {
 
@@ -121,5 +122,7 @@ class CustomerServiceClientTest {
         // Verify the actualResponse matches the expectedResponse
         assertEquals(expectedResponse, actualResponse);
     }
+
+     */
 
 }

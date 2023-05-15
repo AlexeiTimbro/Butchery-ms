@@ -88,13 +88,39 @@ class GlobalControllerExceptionHandlerTest {
     public void testHandleThisFieldIsRequiredException() {
         WebRequest request = mock(WebRequest.class);
         when(request.getDescription(false)).thenReturn("test/path");
-        ThisFieldIsRequiredException ex = new ThisFieldIsRequiredException("Price is less or equal to 0");
+        ThisFieldIsRequiredException ex = new ThisFieldIsRequiredException("This field is required");
 
         HttpErrorInfo errorInfo = handler.handleThisFieldIsRequiredException(request, ex);
 
         assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, errorInfo.getHttpStatus());
         assertEquals("test/path", errorInfo.getPath());
-        assertEquals("Price is less or equal to 0", errorInfo.getMessage());
+        assertEquals("This field is required", errorInfo.getMessage());
+    }
+
+    @Test
+    public void testHandleInvalidInputException() {
+        WebRequest request = mock(WebRequest.class);
+        when(request.getDescription(false)).thenReturn("test/path");
+        InvalidInputException ex = new InvalidInputException("Invalid Input");
+
+        HttpErrorInfo errorInfo = handler.handleInvalidInputException(request, ex);
+
+        assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, errorInfo.getHttpStatus());
+        assertEquals("test/path", errorInfo.getPath());
+        assertEquals("Invalid Input", errorInfo.getMessage());
+    }
+
+    @Test
+    public void testPurchaseDateIsNotValidException() {
+        WebRequest request = mock(WebRequest.class);
+        when(request.getDescription(false)).thenReturn("test/path");
+        PurchaseDateIsNotValid ex = new PurchaseDateIsNotValid("Purchase date is not valid. Can't be under 2023");
+
+        HttpErrorInfo errorInfo = handler.handlePurchaseDateIsNotValidException(request, ex);
+
+        assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, errorInfo.getHttpStatus());
+        assertEquals("test/path", errorInfo.getPath());
+        assertEquals("Purchase date is not valid. Can't be under 2023", errorInfo.getMessage());
     }
 
 }

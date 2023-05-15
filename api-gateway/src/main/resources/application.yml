@@ -19,6 +19,10 @@ app:
   butchers-service:
     host: localhost
     port: 7003
+  purchases-service:
+    host: localhost
+    port: 7004
+
 
 ---
 spring:
@@ -38,5 +42,8 @@ app:
     port: 8080
   butchers-service:
     host: butchers-service
+    port: 8080
+  purchases-service:
+    host: purchases-service
     port: 8080
 

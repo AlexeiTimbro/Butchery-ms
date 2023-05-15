@@ -42,11 +42,9 @@ public class CustomerServiceClient {
 
     }
 
-    //INVENTORY CRUD OPERATION
+    //CRUD OPERATION
 
     public List<CustomerResponseModel> getAllCustomers(){
-        log.debug("3. Received in API-Gateway CustomerServiceClient getAllCustomers.");
-
         try{
             String url = CUSTOMER_SERVICE_BASE_URL;
 
@@ -57,13 +55,11 @@ public class CustomerServiceClient {
         }
 
         catch(HttpClientErrorException ex){
-            log.debug("5. Received in API-Gateway CustomerServiceClient getAllCustomers with exception: " + ex.getMessage());
             throw handleHttpClientException(ex);
         }
     }
 
     public CustomerResponseModel getCustomerByCustomerId(String customerId){
-        log.debug("3. Received in API-Gateway CustomerServiceClient getCustomerByCustomerId with customerId: " + customerId);
 
         try{
             String url = CUSTOMER_SERVICE_BASE_URL +"/" + customerId;
@@ -71,22 +67,15 @@ public class CustomerServiceClient {
             CustomerResponseModel customerResponseModel = restTemplate
                     .getForObject(url, CustomerResponseModel.class);
 
-
-            log.debug("5. Received in API-Gateway CustomerServiceClient getCustomerByCustomerId with CustomerResponseModel: "
-                    + customerResponseModel.getCustomerId());
-
             return customerResponseModel;
         }
 
         catch(HttpClientErrorException ex){
-            log.debug("5. Received in API-Gateway CustomerServiceClient getCustomerByCustomerId with exception: " + ex.getMessage());
             throw handleHttpClientException(ex);
         }
     }
 
     public CustomerResponseModel addCustomer(CustomerRequestModel customerRequestModel){
-
-        log.debug("3. Received in API-Gateway CustomerServiceClient addCustomer.");
 
         try{
             String url = CUSTOMER_SERVICE_BASE_URL;
@@ -102,14 +91,12 @@ public class CustomerServiceClient {
             return customerResponseModel;
         }
         catch(HttpClientErrorException ex){
-            log.debug("5. Received in API-Gateway CustomerServiceClient addCustomer with exception: " + ex.getMessage());
             throw handleHttpClientException(ex);
         }
 
     }
 
     public CustomerResponseModel updateCustomer(CustomerRequestModel customerRequestModel, String customerId){
-        log.debug("3. Received in API-Gateway CustomerServiceClient updateCustomer with customerId: " + customerId);
 
         try{
             String url = CUSTOMER_SERVICE_BASE_URL +"/" + customerId;
@@ -124,30 +111,22 @@ public class CustomerServiceClient {
             CustomerResponseModel customerResponseModel = restTemplate
                     .getForObject(url, CustomerResponseModel.class);
 
-
-            log.debug("5. Received in API-Gateway CustomerServiceClient updateCustomer with CustomerResponseModel: "
-                    + customerResponseModel.getCustomerId());
-
             return customerResponseModel;
         }
 
         catch(HttpClientErrorException ex){
-            log.debug("5. Received in API-Gateway CustomerServiceClient updateCustomer with exception: " + ex.getMessage());
             throw handleHttpClientException(ex);
         }
     }
 
     public void deleteCustomer(String customerId) {
-        log.debug("3. Received in API-Gateway CustomerServiceClient deleteCustomer with customerId: " + customerId);
 
         try {
             String url = CUSTOMER_SERVICE_BASE_URL + "/" + customerId;
 
             restTemplate.delete(url);
 
-            log.debug("5. Successfully deleted customer with id: " + customerId);
         } catch (HttpClientErrorException ex) {
-            log.debug("5. Received in API-Gateway CustomerServiceClient deleteCustomer with exception: " + ex.getMessage());
             throw handleHttpClientException(ex);
         }
     }
@@ -176,8 +155,6 @@ public class CustomerServiceClient {
         if (ex.getStatusCode() == UNPROCESSABLE_ENTITY) {
             return new InvalidEmailAddressException(getErrorMessage(ex));
         }
-        log.warn("Got a unexpected HTTP error: {}, will rethrow it", ex.getStatusCode());
-        log.warn("Error body: {}", ex.getResponseBodyAsString());
         return ex;
     }
 

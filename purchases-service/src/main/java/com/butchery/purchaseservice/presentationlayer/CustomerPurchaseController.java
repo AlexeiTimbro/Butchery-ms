@@ -18,8 +18,13 @@ public class CustomerPurchaseController {
     private final PurchaseService purchaseService;
 
     @GetMapping()
-    ResponseEntity <List<PurchaseResponseModel>> getAllPurchases(){
-        return ResponseEntity.ok().body(purchaseService.getAllPurchaseAggregate());
+    ResponseEntity <List<PurchaseResponseModel>> getAllCustomerPurchases(@PathVariable String customerId){
+        return ResponseEntity.ok().body(purchaseService.getAllCustomerPurchases(customerId));
+    }
+
+    @GetMapping("/{purchaseId}")
+    ResponseEntity <PurchaseResponseModel> getAllCustomerPurchaseByCustomerIdAndPurchaseId(@PathVariable String customerId,@PathVariable String purchaseId){
+        return ResponseEntity.ok().body(purchaseService.getCustomerPurchaseByCustomerAndPurchaseId(customerId,purchaseId));
     }
 
     @PostMapping()
@@ -39,4 +44,11 @@ public class CustomerPurchaseController {
 
         return ResponseEntity.ok().body(purchaseService.updateCustomerPurchase(purchaseRequestModel,customerId,purchaseId));
     }
+
+    @DeleteMapping("/{purchaseId}")
+    ResponseEntity<Void>removeCustomerPurchase(@PathVariable String customerId,@PathVariable String purchaseId) {
+        purchaseService.deleteCustomerPurchaseByCustomerAndPurchaseId(customerId,purchaseId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
 }

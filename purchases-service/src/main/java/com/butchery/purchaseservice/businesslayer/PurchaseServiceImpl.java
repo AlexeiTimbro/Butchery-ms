@@ -1,6 +1,7 @@
 package com.butchery.purchaseservice.businesslayer;
 
 import com.butchery.purchaseservice.Utils.Exceptions.NotFoundException;
+import com.butchery.purchaseservice.Utils.Exceptions.PurchaseDateIsNotValid;
 import com.butchery.purchaseservice.datalayer.*;
 import com.butchery.purchaseservice.datamappinglayer.PurchaseResponseModelMapper;
 import com.butchery.purchaseservice.domainclientlayer.butcher.ButcherResponseModel;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -39,6 +41,12 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
+    public List<PurchaseResponseModel> getAllCustomerPurchases(String customerId) {
+        List<Purchase> purchases = purchaseRepository.findAllPurchaseByCustomerIdentifier_CustomerId(customerId);
+        return purchaseResponseModelMapper.entityListToResponseModelList(purchases);
+    }
+
+    @Override
     public PurchaseResponseModel getPurchaseByPurchaseIdAggregate(String purchaseId) {
         Purchase purchase = purchaseRepository.findPurchaseByPurchaseIdentifier_PurchaseId(purchaseId);
 
@@ -48,6 +56,13 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         return purchaseResponseModelMapper.entityToResponseModel(purchase);
 
+    }
+
+    @Override
+    public PurchaseResponseModel getCustomerPurchaseByCustomerAndPurchaseId(String customerId, String purchaseId) {
+        Purchase purchase = purchaseRepository.findPurchaseByCustomerIdentifier_CustomerIdAndPurchaseIdentifier_PurchaseId(customerId,purchaseId);
+
+        return purchaseResponseModelMapper.entityToResponseModel(purchase);
     }
 
 
@@ -72,6 +87,13 @@ public class PurchaseServiceImpl implements PurchaseService {
         if(butcherResponseModel==null){
             throw new NotFoundException("Vehicle with vehicleId: "+ purchaseRequestModel.getButcherId());
         }
+
+        //SPECIFIC EXCEPTION HANDLING
+        LocalDate purchaseDate = purchaseRequestModel.getPurchaseDate();
+        if (purchaseDate.getYear() < 2023) {
+            throw new PurchaseDateIsNotValid("Expiration date cannot be before the year 2023.");
+        }
+
 
         //build the purchase order
         Purchase purchase =Purchase.builder()
@@ -123,9 +145,12 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         meatServiceClient.updateMeatStatus(meatRequestModel, meatResponseModel.getMeatId());
 
-        return purchaseResponseModelMapper.entityToResponseModel(saved);
+
+            return purchaseResponseModelMapper.entityToResponseModel(saved);
+
 
     }
+
 
     @Override
     public PurchaseResponseModel updateCustomerPurchase(PurchaseRequestModel purchaseRequestModel,String customerId, String purchaseId) {
@@ -197,10 +222,23 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         if(existingPurchase == null){
 
-                throw new NotFoundException("No SupervisorConfirmation assigned to this supervisorConfirmationId");
+                throw new NotFoundException("Purchase not assigned to purchaseId");
             }else{
                 purchaseRepository.delete(existingPurchase);
             }
+    }
+
+    @Override
+    public void deleteCustomerPurchaseByCustomerAndPurchaseId(String customerId, String purchaseId) {
+
+        Purchase purchase = purchaseRepository.findPurchaseByCustomerIdentifier_CustomerIdAndPurchaseIdentifier_PurchaseId(customerId,purchaseId);
+
+        if(purchase == null){
+
+            throw new NotFoundException("Purchase not assigned to purchaseId");
+        }else{
+            purchaseRepository.delete(purchase);
+        }
     }
 
 }

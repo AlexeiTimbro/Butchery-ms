@@ -1,12 +1,10 @@
 package com.butchery.apigateway.presentationlayer;
 
 import jdk.jshell.Snippet;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Value;
+import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 
+@EqualsAndHashCode(callSuper=false)
 @Data
 @Builder
 @AllArgsConstructor
