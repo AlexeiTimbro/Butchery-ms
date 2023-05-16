@@ -225,22 +225,18 @@ class ButcherServiceClientTest {
                 .postalCode("postalCode")
                 .build();
 
-        // Mocking ClientHttpRequest
         ClientHttpRequest clientHttpRequest = mock(ClientHttpRequest.class);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         when(clientHttpRequest.getBody()).thenReturn(outputStream);
         HttpHeaders httpHeaders = new HttpHeaders();
         when(clientHttpRequest.getHeaders()).thenReturn(httpHeaders);
 
-        // Access private method via reflection
         Method requestCallbackMethod = ButcherServiceClient.class.getDeclaredMethod("requestCallback", ButcherRequestModel.class);
         requestCallbackMethod.setAccessible(true);
 
-        // Act
         RequestCallback requestCallback = (RequestCallback) requestCallbackMethod.invoke(butcherServiceClient, butcherRequestModel);
         requestCallback.doWithRequest(clientHttpRequest);
 
-        // Assert
         ObjectMapper mapper = new ObjectMapper();
         String expectedBody = mapper.writeValueAsString(butcherRequestModel);
         String actualBody = outputStream.toString();
