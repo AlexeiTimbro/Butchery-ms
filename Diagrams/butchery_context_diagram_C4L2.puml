@@ -33,7 +33,7 @@ Container(butchers_service, "Butchers-Service","Spring boot: Java","Provides fun
 ContainerDb(butchers_database, "Butchers-DB","MySQL","Store butchers information such as name, contact information, their identifier,their salary, their commission rate and their address information.",$sprite="mysql",$tags="databases")
 
 Container(purchases_service, "Purchases-Service","Spring boot: Java","Provides functionalities such as getting all Purchases, getting one purchase, creating a purchase, update a purchase, delete a purchase ,and it also allows to get all meats and butchers inside of one purchase.",$sprite="java",$tags="MS")
-ContainerDb(purchases_database, "Purchases-DB","MySQL","Stores information about the date of the purchase, time of the purchase and the final price.",$sprite="mysql",$tags="databases")
+ContainerDb(purchases_database, "Purchases-DB","MongoDb","Stores information about the purchases. In the format of MongoDB",$sprite="mysql",$tags="databases")
 
 }
 
@@ -58,7 +58,7 @@ Rel(purchases_service,butchers_service,"Reads from and Writes to","JDBC")
 
 Rel(purchases_service,meats_service,"Reads from and Writes to","JDBC")
 
-BiRel(customers_service,purchases_service,"Reads from and Writes to","JDBC")
+Rel(purchases_service,customers_service,"Reads from and Writes to","JDBC")
 
 Rel_L(customers_service,customers_database,"Reads from and Writes to","JDBC")
 

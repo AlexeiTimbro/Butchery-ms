@@ -139,12 +139,15 @@ public class CustomerServiceClient {
         if (ex.getStatusCode() == NOT_FOUND) {
             return new NotFoundException(getErrorMessage(ex));
         }
+        /*
         if (ex.getStatusCode() == UNPROCESSABLE_ENTITY) {
             return new DuplicatePhoneNumberException(getErrorMessage(ex));
         }
         if (ex.getStatusCode() == UNPROCESSABLE_ENTITY) {
             return new InvalidEmailAddressException(getErrorMessage(ex));
         }
+
+         */
         return ex;
     }
 
