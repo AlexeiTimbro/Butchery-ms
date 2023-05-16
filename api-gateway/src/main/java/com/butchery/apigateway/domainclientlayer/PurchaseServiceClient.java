@@ -200,12 +200,15 @@ public class PurchaseServiceClient {
         if (ex.getStatusCode() == NOT_FOUND) {
             return new NotFoundException(getErrorMessage(ex));
         }
+        /*
         if (ex.getStatusCode() == UNPROCESSABLE_ENTITY) {
             return new InvalidInputException(ex);
         }
         if (ex.getStatusCode() == UNPROCESSABLE_ENTITY) {
             return new PurchaseDateIsNotValid(getErrorMessage(ex));
         }
+
+         */
         return ex;
     }
 }
