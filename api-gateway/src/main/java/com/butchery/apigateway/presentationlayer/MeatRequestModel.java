@@ -15,6 +15,6 @@ public class MeatRequestModel extends RepresentationModel<MeatRequestModel> {
     String environment;
     String texture;
     String expirationDate;
-    Integer price;
+    Double price;
 
 }

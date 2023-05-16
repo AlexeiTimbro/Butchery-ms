@@ -29,7 +29,7 @@ public class PurchasesController{
     ResponseEntity<List<PurchaseResponseModel>> getAllPurchases(){
 
         //Keep track
-        log.debug("1. Received in API-Gateway purchases Controller getAllPurchases.");
+        //log.debug("1. Received in API-Gateway purchases Controller getAllPurchases.");
 
         return ResponseEntity.ok().body(purchaseService.getAllPurchasesAggregate());
     }
@@ -41,7 +41,7 @@ public class PurchasesController{
         }
 
         //Keep track
-        log.debug("1. Received in API-Gateway Meats Controller getMeatByMeatId with meatId: " + purchaseId);
+        //log.debug("1. Received in API-Gateway Meats Controller getMeatByMeatId with meatId: " + purchaseId);
         return ResponseEntity.ok().body(purchaseService.getPurchaseByPurchaseIdAggregate(purchaseId));
     }
 
@@ -52,7 +52,7 @@ public class PurchasesController{
         }
 
         //Keep track
-        log.debug("1. Received in API-Gateway Purchase Controller deletePurchase with purchaseId: " + purchaseId);
+        //log.debug("1. Received in API-Gateway Purchase Controller deletePurchase with purchaseId: " + purchaseId);
         purchaseService.deletePurchaseAggregate(purchaseId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

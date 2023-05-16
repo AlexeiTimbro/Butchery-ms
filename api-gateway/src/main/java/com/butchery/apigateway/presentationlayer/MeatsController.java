@@ -26,7 +26,7 @@ public class MeatsController {
     ResponseEntity<List<MeatResponseModel>> getAllMeats(){
 
         //Keep track
-        log.debug("1. Received in API-Gateway meats Controller getAllMeats.");
+        //log.debug("1. Received in API-Gateway meats Controller getAllMeats.");
 
         return ResponseEntity.ok().body(meatsService.getAllMeats());
     }
@@ -38,7 +38,7 @@ public class MeatsController {
         }
 
         //Keep track
-        log.debug("1. Received in API-Gateway Meats Controller getMeatByMeatId with meatId: " + meatId);
+        //log.debug("1. Received in API-Gateway Meats Controller getMeatByMeatId with meatId: " + meatId);
         return ResponseEntity.ok().body(meatsService.getMeatByMeatId(meatId));
     }
 
@@ -46,7 +46,7 @@ public class MeatsController {
     ResponseEntity<MeatResponseModel> addMeat(@RequestBody MeatRequestModel meatRequestModel){
 
         //Keep track
-        log.debug("1. Received in API-Gateway Meats Controller addMeat.");
+        //log.debug("1. Received in API-Gateway Meats Controller addMeat.");
         return ResponseEntity.status(HttpStatus.CREATED).body(meatsService.addMeat(meatRequestModel));
     }
 
@@ -57,7 +57,7 @@ public class MeatsController {
         }
 
         //Keep track
-        log.debug("1. Received in API-Gateway Meats Controller updatemeat with meatId: " + meatId);
+        //log.debug("1. Received in API-Gateway Meats Controller updatemeat with meatId: " + meatId);
         return ResponseEntity.ok().body(meatsService.updateMeat(meatRequestModel,meatId));
     }
 
@@ -68,7 +68,7 @@ public class MeatsController {
         }
 
         //Keep track
-        log.debug("1. Received in API-Gateway Meat Controller deleteMeat with meatId: " + meatId);
+        //log.debug("1. Received in API-Gateway Meat Controller deleteMeat with meatId: " + meatId);
         meatsService.deleteMeat(meatId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

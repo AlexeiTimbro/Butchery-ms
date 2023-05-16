@@ -26,7 +26,7 @@ public class ButcherController {
     ResponseEntity<List<ButcherResponseModel>> getAllButchers(){
 
         //Keep track
-        log.debug("1. Received in API-Gateway butcher Controller getAllButcher.");
+        //log.debug("1. Received in API-Gateway butcher Controller getAllButcher.");
 
         return ResponseEntity.ok().body(butchersService.getAllButchers());
     }
@@ -38,7 +38,7 @@ public class ButcherController {
         }
 
         //Keep track
-        log.debug("1. Received in API-Gateway Butchers Controller getButcherByButcherId with butcherId: " + butcherId);
+        //log.debug("1. Received in API-Gateway Butchers Controller getButcherByButcherId with butcherId: " + butcherId);
         return ResponseEntity.ok().body(butchersService.getButcherByButcherId(butcherId));
     }
 
@@ -46,7 +46,7 @@ public class ButcherController {
     ResponseEntity<ButcherResponseModel> addButcher(@RequestBody ButcherRequestModel butcherRequestModel){
 
         //Keep track
-        log.debug("1. Received in API-Gateway Butchers Controller addButcher.");
+        //log.debug("1. Received in API-Gateway Butchers Controller addButcher.");
         return ResponseEntity.status(HttpStatus.CREATED).body(butchersService.addButcher(butcherRequestModel));
     }
 
@@ -57,7 +57,7 @@ public class ButcherController {
         }
 
         //Keep track
-        log.debug("1. Received in API-Gateway Butchers Controller updateButcher with butcherId: " + butcherId);
+        //log.debug("1. Received in API-Gateway Butchers Controller updateButcher with butcherId: " + butcherId);
         return ResponseEntity.ok().body(butchersService.updateButcher(butcherRequestModel,butcherId));
     }
 
@@ -68,7 +68,7 @@ public class ButcherController {
         }
 
         //Keep track
-        log.debug("1. Received in API-Gateway Butcher Controller deleteButcher with butcherId: " + butcherId);
+        //log.debug("1. Received in API-Gateway Butcher Controller deleteButcher with butcherId: " + butcherId);
         butchersService.deleteButcher(butcherId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

@@ -10,10 +10,10 @@ import org.springframework.hateoas.RepresentationModel;
 public class MeatResponseModel extends RepresentationModel<MeatResponseModel> {
 
     String meatId;
-    Status status;
     String animal;
+    Status status;
     String environment;
     String texture;
     String expirationDate;
-    Integer price;
+    Double price;
 }

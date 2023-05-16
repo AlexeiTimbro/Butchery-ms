@@ -1,7 +1,13 @@
 package com.butchery.butcherservice.presentationlayer;
 
+import com.butchery.butcherservice.datalayer.Butcher;
 import lombok.*;
+import org.mapstruct.AfterMapping;
+import org.mapstruct.MappingTarget;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.RepresentationModel;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 //@Value
 //@Builder
@@ -26,5 +32,8 @@ public class ButcherResponseModel extends RepresentationModel<ButcherResponseMod
     String province;
     String country;
     String postalCode;
+
+
+
 
 }

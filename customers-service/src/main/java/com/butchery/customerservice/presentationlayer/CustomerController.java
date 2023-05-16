@@ -18,28 +18,28 @@ public class CustomerController {
     }
 
     @GetMapping()
-    ResponseEntity<List<CustomerResponseModel>> getCustomers() {
+    public ResponseEntity<List<CustomerResponseModel>> getCustomers() {
         return ResponseEntity.ok().body(customerService.getCustomers());
     }
 
 
     @GetMapping("/{customerId}")
-    ResponseEntity<CustomerResponseModel> getCustomerByCustomerId(@PathVariable String customerId) {
+    public ResponseEntity<CustomerResponseModel> getCustomerByCustomerId(@PathVariable String customerId) {
         return ResponseEntity.ok().body(customerService.getCustomerByCustomerId(customerId));
     }
 
     @PostMapping()
-    ResponseEntity<CustomerResponseModel> addCustomer(@RequestBody CustomerRequestModel customerRequestModel) {
+    public ResponseEntity<CustomerResponseModel> addCustomer(@RequestBody CustomerRequestModel customerRequestModel) {
         return ResponseEntity.status(HttpStatus.CREATED).body(customerService.addCustomer(customerRequestModel));
     }
 
     @PutMapping("/{customerId}")
-    ResponseEntity<CustomerResponseModel> updateCustomer(@RequestBody CustomerRequestModel customerRequestModel, @PathVariable String customerId) {
+    public ResponseEntity<CustomerResponseModel> updateCustomer(@RequestBody CustomerRequestModel customerRequestModel, @PathVariable String customerId) {
         return ResponseEntity.ok().body(customerService.updateCustomer(customerRequestModel, customerId));
     }
 
     @DeleteMapping("/{customerId}")
-    ResponseEntity <Void> removeCustomer(@PathVariable String customerId) {
+    public ResponseEntity <Void> removeCustomer(@PathVariable String customerId) {
         customerService.removeCustomer(customerId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

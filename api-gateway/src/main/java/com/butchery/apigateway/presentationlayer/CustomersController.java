@@ -26,7 +26,7 @@ public class CustomersController {
     ResponseEntity<List<CustomerResponseModel>> getAllCustomers(){
 
         //Keep track
-        log.debug("1. Received in API-Gateway customers Controller getAllCustomers.");
+        //log.debug("1. Received in API-Gateway customers Controller getAllCustomers.");
 
         return ResponseEntity.ok().body(customersService.getAllCustomers());
     }
@@ -38,7 +38,7 @@ public class CustomersController {
         }
 
         //Keep track
-        log.debug("1. Received in API-Gateway customers Controller getCustomerByCustomerId with customerId: " + customerId);
+        //log.debug("1. Received in API-Gateway customers Controller getCustomerByCustomerId with customerId: " + customerId);
         return ResponseEntity.ok().body(customersService.getCustomerByCustomerId(customerId));
     }
 
@@ -46,7 +46,7 @@ public class CustomersController {
     ResponseEntity<CustomerResponseModel> addCustomer(@RequestBody CustomerRequestModel customerRequestModel){
 
         //Keep track
-        log.debug("1. Received in API-Gateway Customers Controller addCustomer.");
+        //log.debug("1. Received in API-Gateway Customers Controller addCustomer.");
         return ResponseEntity.status(HttpStatus.CREATED).body(customersService.addCustomer(customerRequestModel));
     }
 
@@ -57,7 +57,7 @@ public class CustomersController {
         }
 
         //Keep track
-        log.debug("1. Received in API-Gateway Customers Controller updateCustomers with customerId: " + customerId);
+        //log.debug("1. Received in API-Gateway Customers Controller updateCustomers with customerId: " + customerId);
         return ResponseEntity.ok().body(customersService.updateCustomer(customerRequestModel,customerId));
     }
 
@@ -68,7 +68,7 @@ public class CustomersController {
         }
 
         //Keep track
-        log.debug("1. Received in API-Gateway Customer Controller deleteCustomer with customerId: " + customerId);
+        //log.debug("1. Received in API-Gateway Customer Controller deleteCustomer with customerId: " + customerId);
         customersService.deleteCustomer(customerId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

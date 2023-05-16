@@ -18,17 +18,17 @@ public class PurchaseController {
     private final PurchaseService purchaseService;
 
     @GetMapping()
-    ResponseEntity <List<PurchaseResponseModel>> getAllPurchases(){
+    public ResponseEntity <List<PurchaseResponseModel>> getAllPurchases(){
         return ResponseEntity.ok().body(purchaseService.getAllPurchaseAggregate());
     }
 
     @GetMapping("/{purchaseId}")
-    ResponseEntity <PurchaseResponseModel> getAllPurchaseById(@PathVariable String purchaseId){
+    public ResponseEntity <PurchaseResponseModel> getAllPurchaseById(@PathVariable String purchaseId){
         return ResponseEntity.ok().body(purchaseService.getPurchaseByPurchaseIdAggregate(purchaseId));
     }
 
     @DeleteMapping("/{purchaseId}")
-    ResponseEntity<Void>removeButcher(@PathVariable String purchaseId) {
+    public ResponseEntity<Void>removeButcher(@PathVariable String purchaseId) {
         purchaseService.deletePurchaseAggregate(purchaseId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

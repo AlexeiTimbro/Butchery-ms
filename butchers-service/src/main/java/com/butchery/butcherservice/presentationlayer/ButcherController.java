@@ -21,27 +21,27 @@ public class ButcherController {
     }
 
     @GetMapping()
-    ResponseEntity <List<ButcherResponseModel>> getButchers() {
+    public ResponseEntity <List<ButcherResponseModel>> getButchers() {
         return ResponseEntity.ok().body(butcherService.getButchers());
     }
 
     @GetMapping("/{butcherId}")
-    ResponseEntity<ButcherResponseModel> getButcherByButcherId(@PathVariable String butcherId) {
+    public ResponseEntity<ButcherResponseModel> getButcherByButcherId(@PathVariable String butcherId) {
         return ResponseEntity.ok().body(butcherService.getButcherByButcherId(butcherId));
     }
 
     @PostMapping()
-    ResponseEntity<ButcherResponseModel> addButcher(@RequestBody ButcherRequestModel butcherRequestModel) {
+    public ResponseEntity<ButcherResponseModel> addButcher(@RequestBody ButcherRequestModel butcherRequestModel) {
         return ResponseEntity.status(HttpStatus.CREATED).body(butcherService.addButcher(butcherRequestModel));
     }
 
     @PutMapping("/{butcherId}")
-    ResponseEntity<ButcherResponseModel> updateButcher(@RequestBody ButcherRequestModel butcherRequestModel, @PathVariable String butcherId) {
+    public ResponseEntity<ButcherResponseModel> updateButcher(@RequestBody ButcherRequestModel butcherRequestModel, @PathVariable String butcherId) {
         return ResponseEntity.ok().body(butcherService.updateButcher(butcherRequestModel, butcherId));
     }
 
     @DeleteMapping("/{butcherId}")
-    ResponseEntity<Void>removeButcher(@PathVariable String butcherId) {
+    public ResponseEntity<Void>removeButcher(@PathVariable String butcherId) {
         butcherService.removeButcher(butcherId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

@@ -5,7 +5,6 @@ import lombok.*;
 //@EqualsAndHashCode(callSuper = false)
 @Value
 @Builder
-//@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ButcherRequestModel {
 

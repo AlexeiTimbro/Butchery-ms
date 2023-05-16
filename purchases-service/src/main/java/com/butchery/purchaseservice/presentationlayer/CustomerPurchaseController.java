@@ -18,17 +18,17 @@ public class CustomerPurchaseController {
     private final PurchaseService purchaseService;
 
     @GetMapping()
-    ResponseEntity <List<PurchaseResponseModel>> getAllCustomerPurchases(@PathVariable String customerId){
+    public ResponseEntity <List<PurchaseResponseModel>> getAllCustomerPurchases(@PathVariable String customerId){
         return ResponseEntity.ok().body(purchaseService.getAllCustomerPurchases(customerId));
     }
 
     @GetMapping("/{purchaseId}")
-    ResponseEntity <PurchaseResponseModel> getAllCustomerPurchaseByCustomerIdAndPurchaseId(@PathVariable String customerId,@PathVariable String purchaseId){
+    public ResponseEntity <PurchaseResponseModel> getAllCustomerPurchaseByCustomerIdAndPurchaseId(@PathVariable String customerId,@PathVariable String purchaseId){
         return ResponseEntity.ok().body(purchaseService.getCustomerPurchaseByCustomerAndPurchaseId(customerId,purchaseId));
     }
 
     @PostMapping()
-    ResponseEntity<PurchaseResponseModel> processCustomerPurchase(
+    public ResponseEntity<PurchaseResponseModel> processCustomerPurchase(
             @RequestBody PurchaseRequestModel purchaseRequestModel,
             @PathVariable String customerId){
 
@@ -37,7 +37,7 @@ public class CustomerPurchaseController {
     }
 
     @PutMapping("/{purchaseId}")
-    ResponseEntity<PurchaseResponseModel> updateCustomerPurchase(
+    public ResponseEntity<PurchaseResponseModel> updateCustomerPurchase(
             @RequestBody PurchaseRequestModel purchaseRequestModel,
             @PathVariable String customerId,
             @PathVariable String purchaseId){
@@ -46,7 +46,7 @@ public class CustomerPurchaseController {
     }
 
     @DeleteMapping("/{purchaseId}")
-    ResponseEntity<Void>removeCustomerPurchase(@PathVariable String customerId,@PathVariable String purchaseId) {
+    public ResponseEntity<Void>removeCustomerPurchase(@PathVariable String customerId,@PathVariable String purchaseId) {
         purchaseService.deleteCustomerPurchaseByCustomerAndPurchaseId(customerId,purchaseId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

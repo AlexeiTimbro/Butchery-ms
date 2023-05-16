@@ -16,10 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.*;
+import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -87,9 +91,6 @@ class ButcherServiceClientTest {
         });
     }
 
-
-
-
     @Test
     public void getButcherByButcherIdTest() {
         ButcherResponseModel butcherResponseModel = new ButcherResponseModel(butcherId, "Joe", "Burrow", 21, "joeburrow@gmail.com", "514-123-4356", 45000.00, 4.5, "street", "city", "province","country","postalCode");
@@ -138,21 +139,6 @@ class ButcherServiceClientTest {
         ButcherResponseModel result = butcherServiceClient.addButcher(butcherRequestModel);
 
         assertEquals(result.getButcherId(), butcherId);
-        /*
-        assertEquals(result.getFirstName(), "Joe");
-        assertEquals(result.getLastName(), "Burrow");
-        assertEquals(result.getAge(), 21);
-        assertEquals(result.getEmail(), "joeburrow@gmail.com");
-        assertEquals(result.getPhoneNumber(), "514-123-4356");
-        assertEquals(result.getSalary(), 45000.00);
-        assertEquals(result.getCommissionRate(), 4.5);
-        assertEquals(result.getStreet(), "street");
-        assertEquals(result.getCity(), "city");
-        assertEquals(result.getProvince(), "province");
-        assertEquals(result.getCountry(), "country");
-        assertEquals(result.getPostalCode(), "postalCode");
-
-         */
 
         verify(restTemplate, times(1)).postForObject(baseUrl, butcherRequestModel, ButcherResponseModel.class);
     }
@@ -186,71 +172,83 @@ class ButcherServiceClientTest {
     }
 
 
-    /*
+
+
     @Test
     public void updateButcherTest() {
+        // Given
+        String butcherId = "id1";
 
-        // Arrange
         String url = baseUrl + "/" + butcherId;
+
         ButcherRequestModel butcherRequestModel = new ButcherRequestModel("Joe", "Burrow", 21, "joeburrow@gmail.com", "514-123-4356", 45000.00, 4.5, "street", "city", "province","country","postalCode");
 
-        ButcherResponseModel expectedResponse = new ButcherResponseModel("1234", "Joe", "Burrow", 21, "joeburrow@gmail.com", "514-123-4356", 45000.00, 4.5, "street", "city", "province", "country", "postalCode");
+        when(restTemplate.execute(eq(url), eq(HttpMethod.PUT), any(RequestCallback.class), any())).thenReturn(null);
 
-        when(restTemplate.execute(eq(url), eq(HttpMethod.PUT), any(), any()))
-                .thenReturn(expectedResponse);
+        // When
+        butcherServiceClient.updateButcher(butcherRequestModel, butcherId);
+
+        // Then
+        verify(restTemplate, times(1)).execute(eq(url), eq(HttpMethod.PUT), any(RequestCallback.class), any());
+    }
+
+    @Test
+    public void deleteButcherTest() {
+        // Given
+        String butcherId = "id1";
+        String url = baseUrl + "/" + butcherId;
+
+        when(restTemplate.execute(eq(url), eq(HttpMethod.DELETE), any(),  any())).thenReturn(null);
+
+        // When
+        butcherServiceClient.deleteButcher(butcherId);
+
+        // Then
+        verify(restTemplate, times(1)).execute(eq(url), eq(HttpMethod.DELETE), any(),  any());
+    }
+
+    @Test
+    public void callbackMethodTest() throws Exception {
+        // Arrange
+        ButcherRequestModel butcherRequestModel = ButcherRequestModel.builder()
+                .firstName("Joe")
+                .lastName("Burrow")
+                .age(21)
+                .email("joeburrow@gmail.com")
+                .phoneNumber("514-123-4356")
+                .salary(45000.00)
+                .commissionRate(4.5)
+                .street("street")
+                .city("city")
+                .province("province")
+                .country("country")
+                .postalCode("postalCode")
+                .build();
+
+        // Mocking ClientHttpRequest
+        ClientHttpRequest clientHttpRequest = mock(ClientHttpRequest.class);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        when(clientHttpRequest.getBody()).thenReturn(outputStream);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        when(clientHttpRequest.getHeaders()).thenReturn(httpHeaders);
+
+        // Access private method via reflection
+        Method requestCallbackMethod = ButcherServiceClient.class.getDeclaredMethod("requestCallback", ButcherRequestModel.class);
+        requestCallbackMethod.setAccessible(true);
 
         // Act
-        ButcherResponseModel result = butcherServiceClient.updateButcher(butcherRequestModel, butcherId);
+        RequestCallback requestCallback = (RequestCallback) requestCallbackMethod.invoke(butcherServiceClient, butcherRequestModel);
+        requestCallback.doWithRequest(clientHttpRequest);
 
         // Assert
-        assertNotNull(result);
-        assertEquals(expectedResponse.getButcherId(), result.getButcherId());
-        assertEquals(expectedResponse.getFirstName(), result.getFirstName());
-        assertEquals(expectedResponse.getLastName(), result.getLastName());
-        assertEquals(expectedResponse.getAge(), result.getAge());
-        assertEquals(expectedResponse.getEmail(), result.getEmail());
-        assertEquals(expectedResponse.getPhoneNumber(), result.getPhoneNumber());
-        assertEquals(expectedResponse.getSalary(), result.getSalary());
-        assertEquals(expectedResponse.getCommissionRate(), result.getCommissionRate());
-        assertEquals(expectedResponse.getStreet(), result.getStreet());
-        assertEquals(expectedResponse.getCity(), result.getCity());
-        assertEquals(expectedResponse.getProvince(), result.getProvince());
-        assertEquals(expectedResponse.getCountry(), result.getCountry());
-        assertEquals(expectedResponse.getPostalCode(), result.getPostalCode());
+        ObjectMapper mapper = new ObjectMapper();
+        String expectedBody = mapper.writeValueAsString(butcherRequestModel);
+        String actualBody = outputStream.toString();
+        assertEquals(expectedBody, actualBody);
 
-        verify(restTemplate, times(1)).execute(eq(url), eq(HttpMethod.PUT), any(), any());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, httpHeaders.getContentType().toString());
+        assertTrue(httpHeaders.getAccept().contains(MediaType.APPLICATION_JSON));
     }
-
-     */
-
-
-    /*
-    @Test
-    public void testHandleHttpClientException() {
-
-        ButcherServiceClient butcherServiceClient = new ButcherServiceClient(restTemplate, new ObjectMapper(), "localhost", "8080");
-
-        HttpClientErrorException notFoundException = new HttpClientErrorException(HttpStatus.NOT_FOUND);
-        RuntimeException notFoundResult = butcherServiceClient.handleHttpClientException(notFoundException);
-        assertTrue(notFoundResult instanceof NotFoundException);
-
-        HttpClientErrorException duplicatePhoneException = new HttpClientErrorException(HttpStatus.UNPROCESSABLE_ENTITY);
-        RuntimeException duplicatePhoneResult = butcherServiceClient.handleHttpClientException(duplicatePhoneException);
-        assertTrue(duplicatePhoneResult instanceof DuplicatePhoneNumberException);
-
-        // Update the code to throw ButcherIsTooYoungException
-        HttpClientErrorException butcherTooYoungException = new HttpClientErrorException(HttpStatus.UNPROCESSABLE_ENTITY);
-        RuntimeException butcherTooYoungResult = butcherServiceClient.handleHttpClientException(butcherTooYoungException);
-        assertTrue(butcherTooYoungResult instanceof ButcherIsTooYoungException);
-
-        HttpClientErrorException unexpectedException = new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
-        RuntimeException unexpectedResult = butcherServiceClient.handleHttpClientException(unexpectedException);
-        assertEquals(unexpectedException, unexpectedResult);
-    }
-
-     */
-
-
 
 }
 

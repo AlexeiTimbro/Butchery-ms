@@ -1,5 +1,7 @@
 package com.butchery.apigateway.domainclientlayer;
 
+import com.butchery.apigateway.presentationlayer.CustomerRequestModel;
+import com.butchery.apigateway.presentationlayer.CustomerResponseModel;
 import com.butchery.apigateway.presentationlayer.MeatRequestModel;
 import com.butchery.apigateway.presentationlayer.MeatResponseModel;
 import com.butchery.apigateway.utils.HttpErrorInfo;
@@ -11,9 +13,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -81,13 +85,8 @@ public class MeatServiceClient {
         try{
             String url = MEAT_SERVICE_BASE_URL;
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            HttpEntity<MeatRequestModel> requestEntity = new HttpEntity<>(meatRequestModel, headers);
-
             MeatResponseModel meatResponseModel =
-                    restTemplate.postForObject(url, requestEntity, MeatResponseModel.class);
+                    restTemplate.postForObject(url, meatRequestModel, MeatResponseModel.class);
 
             return meatResponseModel;
         }
@@ -102,12 +101,7 @@ public class MeatServiceClient {
         try{
             String url = MEAT_SERVICE_BASE_URL +"/" + meatId;
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            HttpEntity<MeatRequestModel> requestEntity = new HttpEntity<>(meatRequestModel, headers);
-
-            restTemplate.put(url, requestEntity, meatId);
+            restTemplate.execute(url, HttpMethod.PUT, requestCallback(meatRequestModel), clientHttpResponse -> null);
 
             MeatResponseModel meatResponseModel = restTemplate
                     .getForObject(url, MeatResponseModel.class);
@@ -125,7 +119,7 @@ public class MeatServiceClient {
         try {
             String url = MEAT_SERVICE_BASE_URL + "/" + meatId;
 
-            restTemplate.delete(url);
+            restTemplate.execute(url, HttpMethod.DELETE, null, null);
 
         } catch (HttpClientErrorException ex) {
             throw handleHttpClientException(ex);
@@ -158,6 +152,16 @@ public class MeatServiceClient {
             return new ThisFieldIsRequiredException(getErrorMessage(ex));
         }
         return ex;
+    }
+
+
+    private RequestCallback requestCallback(final MeatRequestModel meatRequestModel) {
+        return clientHttpRequest -> {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(clientHttpRequest.getBody(), meatRequestModel);
+            clientHttpRequest.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+            clientHttpRequest.getHeaders().add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+        };
     }
 
 

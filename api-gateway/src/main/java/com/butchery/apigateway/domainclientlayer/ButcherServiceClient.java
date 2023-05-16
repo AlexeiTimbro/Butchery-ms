@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -97,13 +98,11 @@ public class ButcherServiceClient {
         try{
             String url = BUTCHER_SERVICE_BASE_URL +"/" + butcherId;
 
-
-            restTemplate.put(url, butcherRequestModel, butcherId);
+            restTemplate.execute(url, HttpMethod.PUT, requestCallback(butcherRequestModel), clientHttpResponse -> null);
 
             ButcherResponseModel butcherResponseModel = restTemplate
                     .getForObject(url, ButcherResponseModel.class);
 
-            //restTemplate.execute(url, HttpMethod.PUT, requestCallback(clientRequestModel), clientHttpResponse -> null);
 
             return butcherResponseModel;
         }
@@ -118,7 +117,7 @@ public class ButcherServiceClient {
         try {
             String url = BUTCHER_SERVICE_BASE_URL + "/" + butcherId;
 
-            restTemplate.delete(url);
+            restTemplate.execute(url, HttpMethod.DELETE, null, null);
 
         } catch (HttpClientErrorException ex) {
             throw handleHttpClientException(ex);
@@ -150,5 +149,14 @@ public class ButcherServiceClient {
             return new ButcherIsTooYoungException(getErrorMessage(ex));
         }
         return ex;
+    }
+
+    private RequestCallback requestCallback(final ButcherRequestModel butcherRequestModel) {
+        return clientHttpRequest -> {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(clientHttpRequest.getBody(), butcherRequestModel);
+            clientHttpRequest.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+            clientHttpRequest.getHeaders().add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+        };
     }
 }

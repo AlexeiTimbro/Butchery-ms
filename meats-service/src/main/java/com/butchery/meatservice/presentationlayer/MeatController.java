@@ -18,27 +18,27 @@ public class MeatController {
     }
 
     @GetMapping()
-    ResponseEntity <List<MeatResponseModel>> getMeats() {
+    public ResponseEntity <List<MeatResponseModel>> getMeats() {
         return ResponseEntity.ok().body(meatService.getMeats());
     }
 
     @GetMapping("/{meatId}")
-    ResponseEntity<MeatResponseModel> getMeatByMeatId(@PathVariable String meatId) {
+    public ResponseEntity<MeatResponseModel> getMeatByMeatId(@PathVariable String meatId) {
         return ResponseEntity.ok().body(meatService.getMeatByMeatId(meatId));
     }
 
     @PostMapping()
-    ResponseEntity<MeatResponseModel> addMeat(@RequestBody MeatRequestModel meatRequestModel) {
+    public ResponseEntity<MeatResponseModel> addMeat(@RequestBody MeatRequestModel meatRequestModel) {
         return ResponseEntity.status(HttpStatus.CREATED).body(meatService.addMeat(meatRequestModel));
     }
 
     @PutMapping("/{meatId}")
-    ResponseEntity<MeatResponseModel> updateMeat(@RequestBody MeatRequestModel meatRequestModel, @PathVariable String meatId) {
+    public ResponseEntity<MeatResponseModel> updateMeat(@RequestBody MeatRequestModel meatRequestModel, @PathVariable String meatId) {
         return ResponseEntity.ok().body(meatService.updateMeat(meatRequestModel,meatId));
     }
 
     @DeleteMapping("/{meatId}")
-    ResponseEntity <Void> removeMeat(@PathVariable String meatId) {
+    public ResponseEntity <Void> removeMeat(@PathVariable String meatId) {
         meatService.removeMeat(meatId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
