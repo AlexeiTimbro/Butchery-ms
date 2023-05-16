@@ -145,14 +145,13 @@ public class MeatServiceClient {
 
         if (ex.getStatusCode() == NOT_FOUND) {
             return new NotFoundException(getErrorMessage(ex));
-        }/*
+        }
         if (ex.getStatusCode() == UNPROCESSABLE_ENTITY) {
             return new PriceLessOrEqualToZeroException(getErrorMessage(ex));
         }
         if (ex.getStatusCode() == UNPROCESSABLE_ENTITY) {
             return new ThisFieldIsRequiredException(getErrorMessage(ex));
         }
-        */
         return ex;
     }
 

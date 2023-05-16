@@ -47,7 +47,7 @@ public class PurchaseServiceClient {
     }
 
     //CRUD OPERATION
-
+/*
     public List<PurchaseResponseModel> getAllPurchases(){
 
         try{
@@ -64,6 +64,8 @@ public class PurchaseServiceClient {
         }
     }
 
+ */
+
     public List<PurchaseResponseModel> getAllCustomerPurchases(String customerId){
 
         try{
@@ -79,7 +81,7 @@ public class PurchaseServiceClient {
             throw handleHttpClientException(ex);
         }
     }
-
+/*
     public PurchaseResponseModel getPurchaseByPurchaseId(String purchaseId){
 
         try{
@@ -95,6 +97,8 @@ public class PurchaseServiceClient {
             throw handleHttpClientException(ex);
         }
     }
+
+ */
 
     public PurchaseResponseModel getPurchaseByCustomerIdAndPurchaseId(String customerId, String purchaseId){
 
@@ -156,7 +160,7 @@ public class PurchaseServiceClient {
             throw handleHttpClientException(ex);
         }
     }
-
+/*
     public void deletePurchase(String purchaseId) {
 
         try {
@@ -168,6 +172,8 @@ public class PurchaseServiceClient {
             throw handleHttpClientException(ex);
         }
     }
+
+ */
 
     public void deletePurchaseByCustomerIdAndPurchaseId(String customerId, String purchaseId) {
 
@@ -200,15 +206,12 @@ public class PurchaseServiceClient {
         if (ex.getStatusCode() == NOT_FOUND) {
             return new NotFoundException(getErrorMessage(ex));
         }
-        /*
         if (ex.getStatusCode() == UNPROCESSABLE_ENTITY) {
             return new InvalidInputException(ex);
         }
         if (ex.getStatusCode() == UNPROCESSABLE_ENTITY) {
             return new PurchaseDateIsNotValid(getErrorMessage(ex));
         }
-
-         */
         return ex;
     }
 }

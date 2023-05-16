@@ -25,6 +25,7 @@ public class PurchasesController{
         this.purchaseService = purchaseService;
     }
 
+    /*
     @GetMapping(produces ="application/json")
     ResponseEntity<List<PurchaseResponseModel>> getAllPurchases(){
 
@@ -56,6 +57,8 @@ public class PurchasesController{
         purchaseService.deletePurchaseAggregate(purchaseId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+     */
 
 
 }

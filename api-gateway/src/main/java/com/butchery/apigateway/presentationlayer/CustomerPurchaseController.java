@@ -39,9 +39,8 @@ public class CustomerPurchaseController {
     }
 
     @PutMapping(value = "/{purchaseId}", consumes = "application/json", produces = "application/json")
-    ResponseEntity<Void> updateCustomerPurchase(@RequestBody PurchaseRequestModel purchaseRequestModel, @PathVariable String customerId, @PathVariable String purchaseId) {
-        purchaseService.updateCustomerPurchase(purchaseRequestModel,customerId,purchaseId);
-        return ResponseEntity.noContent().build();
+    ResponseEntity<PurchaseResponseModel> updateCustomerPurchase(@RequestBody PurchaseRequestModel purchaseRequestModel, @PathVariable String customerId, @PathVariable String purchaseId) {
+        return ResponseEntity.ok().body(purchaseService.updateCustomerPurchase(purchaseRequestModel,customerId,purchaseId));
     }
 
     @DeleteMapping(value = "/{purchaseId}", produces = "application/json")

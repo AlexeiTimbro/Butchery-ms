@@ -3,6 +3,7 @@ package com.butchery.apigateway.presentationlayer;
 import com.butchery.apigateway.domainclientlayer.ButcherServiceClient;
 import com.butchery.apigateway.domainclientlayer.PurchaseServiceClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,16 +11,20 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.client.RestTemplate;
 
+
+
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -82,57 +87,80 @@ class CustomerPurchaseControllerIntegrationTest {
 
     @Test
     void processCustomerPurchase() throws Exception{
-        /*
-        String customerIdId = "cusId";
+        String customerId = "customerId";
 
-        List<Items> items = new ArrayList<>();
+        objectMapper.registerModule(new JavaTimeModule());
 
-        items.add(new Items("item1", "desc1", 10.0));
-        items.add(new Items("item2", "desc2", 20.0));
-
-        OrderRequestModel orderRequestModel = OrderRequestModel.builder()
-                .restaurantId("restoId1")
-                .menuId("menuId1")
-                .totalPrice(20.0)
-                .deliveryDriverId("driverId1")
-                .orderStatus(OrderStatus.MAKING_ORDER)
-                .items(items)
-                .estimatedDeliveryTime("10 minutes")
-                .orderDate("2023-01-01")
+        PurchaseRequestModel purchaseRequestModel = PurchaseRequestModel.builder()
+                .purchaseId("purchaseId")
+                .customerId("customerId")
+                .meatId("meatId")
+                .butcherId("butcherId")
+                .salePrice(22.22)
+                .purchaseStatus(PurchaseStatus.PURCHASE_COMPLETED)
+                .paymentMethod(PaymentMethod.CREDIT)
+                .purchaseDate(LocalDate.of(2023, 04, 10))
                 .build();
 
-        OrderResponseModel orderResponseModel = new OrderResponseModel("orderId1", customerIdId, "restoId1", "menuId1", "driverId1",
-                "John", "Doe", "testUser", "test@email.com", items, "resto1", "typeOfMenu1", OrderStatus.MAKING_ORDER, 20.0, "10 minutes", "2023-01-01");
+        PurchaseResponseModel purchase1 = new PurchaseResponseModel("purchaseId", "customerId", "meatId", "butcherId", "butcherFirstName", "butcherLastName",
+                "customerFirstName", "customerLastName", 22.22, PurchaseStatus.PURCHASE_COMPLETED, "animal", "environment", "texture", "expirationDate", PaymentMethod.CREDIT, LocalDate.of(2023, 04, 10));
 
-        when(orderServiceClient.processClientOrders(orderRequestModel,customerIdId)).thenReturn(orderResponseModel);
+        when(purchaseServiceClient.addPurchase(purchaseRequestModel, customerId)).thenReturn(purchase1);
 
-        MvcResult mvcResult = mockMvc.perform(post("/api/v1/clients/" + customerIdId + "/orders")
+        MvcResult mvcResult = mockMvc.perform(post("/api/v1/customers/" + customerId + "/purchases")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(orderRequestModel)))
+                        .content(objectMapper.writeValueAsString(purchaseRequestModel)))
                 .andExpect(status().isCreated())
                 .andReturn();
 
         String responseContent = mvcResult.getResponse().getContentAsString();
         System.out.println("Response Content: " + responseContent);
 
+        PurchaseResponseModel actual = objectMapper.readValue(responseContent, PurchaseResponseModel.class);
 
-        OrderResponseModel actual = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), OrderResponseModel.class);
-
-        assertEquals(orderRequestModel.getRestaurantId(), actual.getRestaurantId());
-        assertEquals(orderRequestModel.getMenuId(), actual.getMenuId());
-        assertEquals(orderRequestModel.getTotalPrice(), actual.getFinalPrice());
-        assertEquals(orderRequestModel.getDeliveryDriverId(), actual.getDeliveryDriverId());
-        assertEquals(orderRequestModel.getOrderStatus(), actual.getOrderStatus());
-        assertEquals(orderRequestModel.getItems(), actual.getItems());
-        assertEquals(orderRequestModel.getEstimatedDeliveryTime(), actual.getEstimatedDeliveryTime());
-        assertEquals(orderRequestModel.getOrderDate(), actual.getOrderDate());
-
-         */
+        assertEquals(purchase1.getPurchaseId(), actual.getPurchaseId());
+        assertEquals(purchase1.getCustomerId(), actual.getCustomerId());
+        assertEquals(purchase1.getMeatId(), actual.getMeatId());
+        assertEquals(purchase1.getButcherId(), actual.getButcherId());
+        assertEquals(purchase1.getSalePrice(), actual.getSalePrice());
+        assertEquals(purchase1.getPurchaseStatus(), actual.getPurchaseStatus());
+        assertEquals(purchase1.getPaymentMethod(), actual.getPaymentMethod());
+        assertEquals(purchase1.getPurchaseDate(), actual.getPurchaseDate());
     }
 
     @Test
     void updateCustomerPurchase() throws Exception{
-    }
+
+            String customerId = "customerId";
+            String purchaseId = "purId";
+
+        objectMapper.registerModule(new JavaTimeModule());
+
+        PurchaseRequestModel purchaseRequestModel = PurchaseRequestModel.builder()
+                .purchaseId("purchaseId")
+                .customerId("customerId")
+                .meatId("meatId")
+                .butcherId("butcherId")
+                .salePrice(22.22)
+                .purchaseStatus(PurchaseStatus.PURCHASE_COMPLETED)
+                .paymentMethod(PaymentMethod.CREDIT)
+                .purchaseDate(LocalDate.of(2023, 04, 10))
+                .build();
+
+        PurchaseResponseModel purchase1 = new PurchaseResponseModel("purchaseId", "customerId", "meatId", "butcherId", "butcherFirstName", "butcherLastName",
+                "customerFirstName", "customerLastName", 22.22, PurchaseStatus.PURCHASE_COMPLETED, "animal", "environment", "texture", "expirationDate", PaymentMethod.CREDIT, LocalDate.of(2023, 04, 10));
+
+        when(purchaseServiceClient.updatePurchase(purchaseRequestModel,customerId,purchaseId)).thenReturn(purchase1);
+
+        mockMvc.perform(put("/api/v1/customers/" + customerId + "/purchases/" + purchaseId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(purchaseRequestModel)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        verify(purchaseServiceClient, times(1)).updatePurchase(purchaseRequestModel,customerId,purchaseId);
+        }
+
 
     @Test
     void deletePurchaseByCustomerIdAndPurchaseId() throws Exception{
