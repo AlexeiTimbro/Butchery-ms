@@ -195,6 +195,11 @@ class ButcherServiceClientTest {
         verify(restTemplate).delete(url);
     }
 
+    @Test
+    public void testDeleteButcher_handleNotFoundException() throws JsonProcessingException {
+
+    }
+
 
 }
 

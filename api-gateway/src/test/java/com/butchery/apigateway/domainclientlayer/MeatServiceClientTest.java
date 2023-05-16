@@ -3,6 +3,7 @@ package com.butchery.apigateway.domainclientlayer;
 import com.butchery.apigateway.presentationlayer.*;
 import com.butchery.apigateway.utils.HttpErrorInfo;
 import com.butchery.apigateway.utils.exceptions.NotFoundException;
+import com.butchery.apigateway.utils.exceptions.PriceLessOrEqualToZeroException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -134,6 +135,100 @@ class MeatServiceClientTest {
         verify(restTemplate, times(1)).postForObject(baseUrl, meatRequestModel, MeatResponseModel.class);
     }
 
+    @Test
+    public void addMeatTest_ThrowsPriceLessOrEqualToZeroException() throws JsonProcessingException{
+
+        MeatRequestModel meatRequestModel = MeatRequestModel.builder()
+                .animal("animal")
+                .status(Status.SOLD)
+                .environment("environment")
+                .texture("texture")
+                .expirationDate("expirationDate")
+                .price(-2.2)
+                .build();
+
+        HttpErrorInfo errorInfo = new HttpErrorInfo(HttpStatus.BAD_REQUEST, baseUrl, "The price needs to be higher than 0.");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+
+        String errorInfoJson = "";
+        try {
+            errorInfoJson = objectMapper.writeValueAsString(errorInfo);
+        } catch (JsonProcessingException e) {
+            fail("Failed to serialize HttpErrorInfo: " + e.getMessage());
+        }
+
+        // Create an HttpClientErrorException
+        HttpClientErrorException ex = HttpClientErrorException.create(HttpStatus.BAD_REQUEST, "The price needs to be higher than 0.",
+                HttpHeaders.EMPTY, errorInfoJson.getBytes(), null);
+
+        // Mock the restTemplate call to throw an HttpClientErrorException
+        when(restTemplate.postForObject(baseUrl, meatRequestModel, MeatResponseModel.class)).thenThrow(ex);
+
+        // Assert that a HttpClientErrorException is thrown
+        Exception exception = assertThrows(HttpClientErrorException.class, () -> {
+            // Call the method to test
+            meatServiceClient.addMeat(meatRequestModel);
+        });
+
+        // Verify that restTemplate.postForObject was called
+        verify(restTemplate, times(1)).postForObject(baseUrl, meatRequestModel, MeatResponseModel.class);
+
+        // Assert the specific exception type and message
+        assertTrue(exception.getMessage().contains("The price needs to be higher than 0."));
+    }
+
+    /*
+    @Test
+    public void addMeatTest_ThisFieldIsRequiredException() throws JsonProcessingException{
+
+        MeatRequestModel meatRequestModel = MeatRequestModel.builder()
+                .animal("")
+                .status(Status.SOLD)
+                .environment("environment")
+                .texture("texture")
+                .expirationDate("expirationDate")
+                .price(-2.2)
+                .build();
+
+        HttpErrorInfo errorInfo = new HttpErrorInfo(HttpStatus.BAD_REQUEST, baseUrl, "The price needs to be higher than 0.");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+
+        String errorInfoJson = "";
+        try {
+            errorInfoJson = objectMapper.writeValueAsString(errorInfo);
+        } catch (JsonProcessingException e) {
+            fail("Failed to serialize HttpErrorInfo: " + e.getMessage());
+        }
+
+        // Create an HttpClientErrorException
+        HttpClientErrorException ex = HttpClientErrorException.create(HttpStatus.BAD_REQUEST, "The price needs to be higher than 0.",
+                HttpHeaders.EMPTY, errorInfoJson.getBytes(), null);
+
+        // Mock the restTemplate call to throw an HttpClientErrorException
+        when(restTemplate.postForObject(baseUrl, meatRequestModel, MeatResponseModel.class)).thenThrow(ex);
+
+        // Assert that a HttpClientErrorException is thrown
+        Exception exception = assertThrows(HttpClientErrorException.class, () -> {
+            // Call the method to test
+            meatServiceClient.addMeat(meatRequestModel);
+        });
+
+        // Verify that restTemplate.postForObject was called
+        verify(restTemplate, times(1)).postForObject(baseUrl, meatRequestModel, MeatResponseModel.class);
+
+        // Assert the specific exception type and message
+        assertTrue(exception.getMessage().contains("The price needs to be higher than 0."));
+    }
+
+     */
+
+
+
+
 
 
     @Test
@@ -175,6 +270,40 @@ class MeatServiceClientTest {
         verify(restTemplate).put(eq(url), eq(meatRequestModel), eq(meatId));
 
     }
+
+    /*
+    @Test
+    public void UpdateMeat_NotFoundExceptionTest() throws JsonProcessingException {
+
+        String meatId = "non-existing-id";
+        MeatRequestModel meatRequestModel = MeatRequestModel.builder()
+                .animal("animal")
+                .status(Status.SOLD)
+                .environment("environment")
+                .texture("texture")
+                .expirationDate("expirationDate")
+                .price(2.2)
+                .build();
+
+        HttpErrorInfo errorInfo = new HttpErrorInfo(HttpStatus.NOT_FOUND, "/api/v1/meats/" + meatId, "Not Found");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+
+        String errorInfoJson = objectMapper.writeValueAsString(errorInfo);
+
+        HttpClientErrorException ex = HttpClientErrorException.create(HttpStatus.NOT_FOUND, "Not Found",
+                HttpHeaders.EMPTY, errorInfoJson.getBytes(), null);
+
+        doThrow(ex).when(restTemplate).execute(anyString(), eq(HttpMethod.PUT), any(), any());
+
+        Exception exception = assertThrows(NotFoundException.class, () ->
+                meatServiceClient.updateMeat(meatRequestModel,meatId));
+
+        assertTrue(exception.getMessage().contains("Not Found"));
+    }
+
+     */
 
     @Test
     public void deleteButcherTest() {
