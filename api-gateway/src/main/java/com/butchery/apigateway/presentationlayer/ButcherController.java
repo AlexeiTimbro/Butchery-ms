@@ -24,7 +24,6 @@ public class ButcherController {
 
     @GetMapping(produces ="application/json")
     ResponseEntity<List<ButcherResponseModel>> getAllButchers(){
-
         return ResponseEntity.ok().body(butchersService.getAllButchers());
     }
 
