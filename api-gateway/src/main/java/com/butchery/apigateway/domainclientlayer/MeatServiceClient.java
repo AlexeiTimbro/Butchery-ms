@@ -101,7 +101,8 @@ public class MeatServiceClient {
         try{
             String url = MEAT_SERVICE_BASE_URL +"/" + meatId;
 
-            restTemplate.execute(url, HttpMethod.PUT, requestCallback(meatRequestModel), clientHttpResponse -> null);
+
+            restTemplate.put(url, meatRequestModel, meatId);
 
             MeatResponseModel meatResponseModel = restTemplate
                     .getForObject(url, MeatResponseModel.class);
@@ -119,7 +120,7 @@ public class MeatServiceClient {
         try {
             String url = MEAT_SERVICE_BASE_URL + "/" + meatId;
 
-            restTemplate.execute(url, HttpMethod.DELETE, null, null);
+            restTemplate.delete(url);
 
         } catch (HttpClientErrorException ex) {
             throw handleHttpClientException(ex);
@@ -144,28 +145,15 @@ public class MeatServiceClient {
 
         if (ex.getStatusCode() == NOT_FOUND) {
             return new NotFoundException(getErrorMessage(ex));
-        }
-        /*
+        }/*
         if (ex.getStatusCode() == UNPROCESSABLE_ENTITY) {
             return new PriceLessOrEqualToZeroException(getErrorMessage(ex));
         }
         if (ex.getStatusCode() == UNPROCESSABLE_ENTITY) {
             return new ThisFieldIsRequiredException(getErrorMessage(ex));
         }
-
-         */
+        */
         return ex;
     }
-
-
-    private RequestCallback requestCallback(final MeatRequestModel meatRequestModel) {
-        return clientHttpRequest -> {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.writeValue(clientHttpRequest.getBody(), meatRequestModel);
-            clientHttpRequest.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-            clientHttpRequest.getHeaders().add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-        };
-    }
-
 
 }

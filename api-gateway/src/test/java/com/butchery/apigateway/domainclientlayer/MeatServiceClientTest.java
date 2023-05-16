@@ -170,56 +170,21 @@ class MeatServiceClientTest {
 
         MeatRequestModel meatRequestModel = new MeatRequestModel("animal", Status.SOLD,"environment", "texture",  "expirationDate", 20.22);
 
-        when(restTemplate.execute(eq(url), eq(HttpMethod.PUT), any(RequestCallback.class), any())).thenReturn(null);
-
         meatServiceClient.updateMeat(meatRequestModel, meatId);
 
-        verify(restTemplate, times(1)).execute(eq(url), eq(HttpMethod.PUT), any(RequestCallback.class), any());
+        verify(restTemplate).put(eq(url), eq(meatRequestModel), eq(meatId));
+
     }
 
     @Test
     public void deleteButcherTest() {
+
         String meatId = "id1";
-
         String url = baseUrl + "/" + meatId;
-
-        when(restTemplate.execute(eq(url), eq(HttpMethod.DELETE), any(),  any())).thenReturn(null);
 
         meatServiceClient.deleteMeat(meatId);
 
-        verify(restTemplate, times(1)).execute(eq(url), eq(HttpMethod.DELETE), any(),  any());
-    }
-
-    @Test
-    public void callbackMethodTest() throws Exception {
-        MeatRequestModel meatRequestModel = MeatRequestModel.builder()
-                .animal("animal")
-                .status(Status.SOLD)
-                .environment("environment")
-                .texture("texture")
-                .expirationDate("expirationDate")
-                .price(20.22)
-                .build();
-
-        ClientHttpRequest clientHttpRequest = mock(ClientHttpRequest.class);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        when(clientHttpRequest.getBody()).thenReturn(outputStream);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        when(clientHttpRequest.getHeaders()).thenReturn(httpHeaders);
-
-        Method requestCallbackMethod = MeatServiceClient.class.getDeclaredMethod("requestCallback", MeatRequestModel.class);
-        requestCallbackMethod.setAccessible(true);
-
-        RequestCallback requestCallback = (RequestCallback) requestCallbackMethod.invoke(meatServiceClient, meatRequestModel);
-        requestCallback.doWithRequest(clientHttpRequest);
-
-        ObjectMapper mapper = new ObjectMapper();
-        String expectedBody = mapper.writeValueAsString(meatRequestModel);
-        String actualBody = outputStream.toString();
-        assertEquals(expectedBody, actualBody);
-
-        assertEquals(MediaType.APPLICATION_JSON_VALUE, httpHeaders.getContentType().toString());
-        assertTrue(httpHeaders.getAccept().contains(MediaType.APPLICATION_JSON));
+        verify(restTemplate).delete(url);
     }
 
 

@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.client.RestTemplate;
@@ -26,8 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class CustomersControllerIntegrationTest {
 
-    @LocalServerPort
-    private int port;
+    private String port = "8080/";
 
     @Autowired
     RestTemplate restTemplate;
@@ -35,21 +33,16 @@ class CustomersControllerIntegrationTest {
     @MockBean
     CustomerServiceClient customerServiceClient;
 
-    private MockRestServiceServer mockRestServiceServer;
-
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private RestTemplate restTemplate1;
-
-
     private ObjectMapper objectMapper = new ObjectMapper();
-    private String baseUrlcustomers = "http://localhost:";
+
+    private String baseUrlCustomers = "http://localhost:";
 
     @BeforeEach
     public void setUp() {
-        baseUrlcustomers = baseUrlcustomers + port + "api/v1/customers";
+        baseUrlCustomers = baseUrlCustomers + port + "api/v1/customers";
     }
 
     @Test

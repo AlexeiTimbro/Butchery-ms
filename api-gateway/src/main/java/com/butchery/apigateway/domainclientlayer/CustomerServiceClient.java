@@ -95,11 +95,10 @@ public class CustomerServiceClient {
         try{
             String url = CUSTOMER_SERVICE_BASE_URL +"/" + customerId;
 
-            restTemplate.execute(url, HttpMethod.PUT, requestCallback(customerRequestModel), clientHttpResponse -> null);
+            restTemplate.put(url, customerRequestModel, customerId);
 
             CustomerResponseModel customerResponseModel = restTemplate
                     .getForObject(url, CustomerResponseModel.class);
-
 
             return customerResponseModel;
         }
@@ -114,14 +113,12 @@ public class CustomerServiceClient {
         try {
             String url = CUSTOMER_SERVICE_BASE_URL + "/" + customerId;
 
-            restTemplate.execute(url, HttpMethod.DELETE, null, null);
+            restTemplate.delete(url);
 
         } catch (HttpClientErrorException ex) {
             throw handleHttpClientException(ex);
         }
     }
-
-
 
 
     private String getErrorMessage(HttpClientErrorException ex) {
@@ -150,15 +147,4 @@ public class CustomerServiceClient {
          */
         return ex;
     }
-
-    private RequestCallback requestCallback(final CustomerRequestModel customerRequestModel) {
-        return clientHttpRequest -> {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.writeValue(clientHttpRequest.getBody(), customerRequestModel);
-            clientHttpRequest.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-            clientHttpRequest.getHeaders().add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-        };
-    }
-
-
 }

@@ -2,6 +2,7 @@ package com.butchery.apigateway.domainclientlayer;
 
 import com.butchery.apigateway.presentationlayer.ButcherRequestModel;
 import com.butchery.apigateway.presentationlayer.ButcherResponseModel;
+import com.butchery.apigateway.presentationlayer.CustomerRequestModel;
 import com.butchery.apigateway.utils.HttpErrorInfo;
 import com.butchery.apigateway.utils.exceptions.ButcherIsTooYoungException;
 import com.butchery.apigateway.utils.exceptions.DuplicatePhoneNumberException;
@@ -143,8 +144,6 @@ class ButcherServiceClientTest {
         verify(restTemplate, times(1)).postForObject(baseUrl, butcherRequestModel, ButcherResponseModel.class);
     }
 
-
-
     @Test
     public void testGetButcherByButcherId_handleNotFoundException() throws JsonProcessingException {
         String butcherId = "This is an invalid butcherId";
@@ -171,9 +170,6 @@ class ButcherServiceClientTest {
         assertTrue(exception.getMessage().contains("Not Found"));
     }
 
-
-
-
     @Test
     public void updateButcherTest() {
         // Given
@@ -183,68 +179,22 @@ class ButcherServiceClientTest {
 
         ButcherRequestModel butcherRequestModel = new ButcherRequestModel("Joe", "Burrow", 21, "joeburrow@gmail.com", "514-123-4356", 45000.00, 4.5, "street", "city", "province","country","postalCode");
 
-        when(restTemplate.execute(eq(url), eq(HttpMethod.PUT), any(RequestCallback.class), any())).thenReturn(null);
-
-        // When
         butcherServiceClient.updateButcher(butcherRequestModel, butcherId);
 
-        // Then
-        verify(restTemplate, times(1)).execute(eq(url), eq(HttpMethod.PUT), any(RequestCallback.class), any());
+        verify(restTemplate).put(eq(url), eq(butcherRequestModel), eq(butcherId));
+
     }
 
     @Test
     public void deleteButcherTest() {
-        // Given
         String butcherId = "id1";
         String url = baseUrl + "/" + butcherId;
 
-        when(restTemplate.execute(eq(url), eq(HttpMethod.DELETE), any(),  any())).thenReturn(null);
-
-        // When
         butcherServiceClient.deleteButcher(butcherId);
 
-        // Then
-        verify(restTemplate, times(1)).execute(eq(url), eq(HttpMethod.DELETE), any(),  any());
+        verify(restTemplate).delete(url);
     }
 
-    @Test
-    public void callbackMethodTest() throws Exception {
-        // Arrange
-        ButcherRequestModel butcherRequestModel = ButcherRequestModel.builder()
-                .firstName("Joe")
-                .lastName("Burrow")
-                .age(21)
-                .email("joeburrow@gmail.com")
-                .phoneNumber("514-123-4356")
-                .salary(45000.00)
-                .commissionRate(4.5)
-                .street("street")
-                .city("city")
-                .province("province")
-                .country("country")
-                .postalCode("postalCode")
-                .build();
-
-        ClientHttpRequest clientHttpRequest = mock(ClientHttpRequest.class);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        when(clientHttpRequest.getBody()).thenReturn(outputStream);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        when(clientHttpRequest.getHeaders()).thenReturn(httpHeaders);
-
-        Method requestCallbackMethod = ButcherServiceClient.class.getDeclaredMethod("requestCallback", ButcherRequestModel.class);
-        requestCallbackMethod.setAccessible(true);
-
-        RequestCallback requestCallback = (RequestCallback) requestCallbackMethod.invoke(butcherServiceClient, butcherRequestModel);
-        requestCallback.doWithRequest(clientHttpRequest);
-
-        ObjectMapper mapper = new ObjectMapper();
-        String expectedBody = mapper.writeValueAsString(butcherRequestModel);
-        String actualBody = outputStream.toString();
-        assertEquals(expectedBody, actualBody);
-
-        assertEquals(MediaType.APPLICATION_JSON_VALUE, httpHeaders.getContentType().toString());
-        assertTrue(httpHeaders.getAccept().contains(MediaType.APPLICATION_JSON));
-    }
 
 }
 

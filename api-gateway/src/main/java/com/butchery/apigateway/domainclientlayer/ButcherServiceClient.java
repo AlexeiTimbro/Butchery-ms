@@ -98,11 +98,10 @@ public class ButcherServiceClient {
         try{
             String url = BUTCHER_SERVICE_BASE_URL +"/" + butcherId;
 
-            restTemplate.execute(url, HttpMethod.PUT, requestCallback(butcherRequestModel), clientHttpResponse -> null);
+            restTemplate.put(url, butcherRequestModel, butcherId);
 
             ButcherResponseModel butcherResponseModel = restTemplate
                     .getForObject(url, ButcherResponseModel.class);
-
 
             return butcherResponseModel;
         }
@@ -117,15 +116,12 @@ public class ButcherServiceClient {
         try {
             String url = BUTCHER_SERVICE_BASE_URL + "/" + butcherId;
 
-            restTemplate.execute(url, HttpMethod.DELETE, null, null);
+            restTemplate.delete(url);
 
         } catch (HttpClientErrorException ex) {
             throw handleHttpClientException(ex);
         }
     }
-
-
-
 
     private String getErrorMessage(HttpClientErrorException ex) {
         try {
@@ -152,14 +148,5 @@ public class ButcherServiceClient {
 
          */
         return ex;
-    }
-
-    private RequestCallback requestCallback(final ButcherRequestModel butcherRequestModel) {
-        return clientHttpRequest -> {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.writeValue(clientHttpRequest.getBody(), butcherRequestModel);
-            clientHttpRequest.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-            clientHttpRequest.getHeaders().add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-        };
     }
 }

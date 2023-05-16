@@ -1,9 +1,6 @@
 package com.butchery.apigateway.domainclientlayer;
 
-import com.butchery.apigateway.presentationlayer.ButcherRequestModel;
-import com.butchery.apigateway.presentationlayer.ButcherResponseModel;
-import com.butchery.apigateway.presentationlayer.CustomerRequestModel;
-import com.butchery.apigateway.presentationlayer.CustomerResponseModel;
+import com.butchery.apigateway.presentationlayer.*;
 import com.butchery.apigateway.utils.HttpErrorInfo;
 import com.butchery.apigateway.utils.exceptions.NotFoundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -169,11 +166,9 @@ class CustomerServiceClientTest {
 
         CustomerRequestModel customerRequestModel = new CustomerRequestModel("Joe", "Burrow", "joeburrow@gmail.com", "514-123-4356","street", "city", "province","country","postalCode");
 
-        when(restTemplate.execute(eq(url), eq(HttpMethod.PUT), any(RequestCallback.class), any())).thenReturn(null);
-
         customerServiceClient.updateCustomer(customerRequestModel,customerId);
 
-        verify(restTemplate, times(1)).execute(eq(url), eq(HttpMethod.PUT), any(RequestCallback.class), any());
+        verify(restTemplate).put(eq(url), eq(customerRequestModel), eq(customerId));
     }
 
     @Test
@@ -181,50 +176,10 @@ class CustomerServiceClientTest {
         String customerId = "id1";
         String url = baseUrl + "/" + customerId;
 
-        when(restTemplate.execute(eq(url), eq(HttpMethod.DELETE), any(),  any())).thenReturn(null);
-
         customerServiceClient.deleteCustomer(customerId);
 
-        verify(restTemplate, times(1)).execute(eq(url), eq(HttpMethod.DELETE), any(),  any());
+        verify(restTemplate).delete(url);
+
     }
-
-
-    @Test
-    public void callBackTest() throws Exception {
-        CustomerRequestModel customerRequestModel = CustomerRequestModel.builder()
-                .firstName("Joe")
-                .lastName("Burrow")
-                .email("joeburrow@gmail.com")
-                .phoneNumber("514-123-4356")
-                .street("street")
-                .city("city")
-                .province("province")
-                .country("country")
-                .postalCode("postalCode")
-                .build();
-
-        ClientHttpRequest clientHttpRequest = mock(ClientHttpRequest.class);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        when(clientHttpRequest.getBody()).thenReturn(outputStream);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        when(clientHttpRequest.getHeaders()).thenReturn(httpHeaders);
-
-        Method requestCallbackMethod = CustomerServiceClient.class.getDeclaredMethod("requestCallback", CustomerRequestModel.class);
-        requestCallbackMethod.setAccessible(true);
-
-        RequestCallback requestCallback = (RequestCallback) requestCallbackMethod.invoke(customerServiceClient, customerRequestModel);
-        requestCallback.doWithRequest(clientHttpRequest);
-
-        ObjectMapper mapper = new ObjectMapper();
-        String expectedBody = mapper.writeValueAsString(customerRequestModel);
-        String actualBody = outputStream.toString();
-        assertEquals(expectedBody, actualBody);
-
-        assertEquals(MediaType.APPLICATION_JSON_VALUE, httpHeaders.getContentType().toString());
-        assertTrue(httpHeaders.getAccept().contains(MediaType.APPLICATION_JSON));
-    }
-
-
-
 
 }

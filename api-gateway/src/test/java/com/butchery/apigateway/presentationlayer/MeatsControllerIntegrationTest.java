@@ -26,8 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class MeatsControllerIntegrationTest {
 
-    @LocalServerPort
-    private int port;
+    private String port = "8080/";
 
     @Autowired
     RestTemplate restTemplate;
