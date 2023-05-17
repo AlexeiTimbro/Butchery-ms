@@ -10,7 +10,7 @@ import org.springframework.hateoas.RepresentationModel;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class ButcherResponseModel{
+public class ButcherResponseModel extends RepresentationModel<ButcherResponseModel>{
 
     String butcherId;
     String firstName;

@@ -13,6 +13,10 @@ public class PurchaseIdentifier {
         this.purchaseId = UUID.randomUUID().toString();
     }
 
+    public PurchaseIdentifier(String purchaseId) {
+        this.purchaseId = purchaseId;
+    }
+
     public String getPurchaseId() {
         return purchaseId;
     }

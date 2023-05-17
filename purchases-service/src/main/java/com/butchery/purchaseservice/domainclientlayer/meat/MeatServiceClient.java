@@ -42,7 +42,6 @@ public class MeatServiceClient {
     //GET BY ID
 
     public MeatResponseModel getMeatByMeatId(String meatId){
-        log.debug("3. Received in API-Gateway MeatServiceClient getMeatByMeatId with meatId: " + meatId);
 
         try{
             String url = MEAT_SERVICE_BASE_URL +"/" + meatId;
@@ -50,24 +49,16 @@ public class MeatServiceClient {
             MeatResponseModel meatResponseModel = restTemplate
                     .getForObject(url, MeatResponseModel.class);
 
-
-            log.debug("5. Received in API-Gateway MeatServiceClient getMeatByMeatId with MeatResponseModel: "
-                    + meatResponseModel.getMeatId());
-
-
             return meatResponseModel;
         }
 
         catch(HttpClientErrorException ex){
-            log.debug("5. Received in API-Gateway MeatServiceClient getMeatByMeatId with exception: " + ex.getMessage());
             throw handleHttpClientException(ex);
         }
     }
 
 
     public void updateMeatStatus(MeatRequestModel meatRequestModel,String meatId){
-
-        log.debug("3. Received in API-Gateway Meat Service Client updateMeatStatus");
 
         try{
             String url=MEAT_SERVICE_BASE_URL+"/"+meatId;
@@ -96,8 +87,6 @@ public class MeatServiceClient {
         if (ex.getStatusCode() == NOT_FOUND) {
             return new NotFoundException(getErrorMessage(ex));
         }
-        log.warn("Got a unexpected HTTP error: {}, will rethrow it", ex.getStatusCode());
-        log.warn("Error body: {}", ex.getResponseBodyAsString());
         return ex;
     }
 

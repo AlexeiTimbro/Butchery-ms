@@ -8,7 +8,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.hateoas.Link;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -26,17 +28,28 @@ public interface PurchaseResponseModelMapper {
     List<PurchaseResponseModel> entityListToResponseModelList(List<Purchase> purchases);
 
     @AfterMapping
-    default void addLinks(@MappingTarget PurchaseResponseModel model, Purchase purchase) {
+    default void addLinks(@MappingTarget PurchaseResponseModel purchaseResponseModel, Purchase purchase) {
 
-        //self Link
-        Link selfLink = linkTo(methodOn(CustomerPurchaseController.class)
-                .getAllCustomerPurchaseByCustomerIdAndPurchaseId(model.getCustomerId(),model.getPurchaseId()))
-                .withSelfRel();
-        model.add(selfLink);
+        URI baseUri = URI.create("http://localhost:8080");
 
-        Link customerLink = linkTo(methodOn(CustomerPurchaseController.class)
-                .getAllCustomerPurchases(model.getCustomerId()))
-                .withRel("All Customer Purchases");
-        model.add(customerLink);
+        Link selfLink = Link.of(
+                ServletUriComponentsBuilder
+                        .fromUri(baseUri)
+                        .pathSegment("api", "v1", "customers", purchaseResponseModel.getCustomerId(), "purchases", purchaseResponseModel.getPurchaseId())
+                        .toUriString(),
+                "Self link");
+
+        Link purchaseLink = Link.of(
+                ServletUriComponentsBuilder
+                        .fromUri(baseUri)
+                        .pathSegment("api", "v1", "customers", purchaseResponseModel.getCustomerId(), "purchases")
+                        .toUriString(),
+                "All Purchases");
+
+        purchaseResponseModel.add(selfLink);
+        purchaseResponseModel.add(purchaseLink);
     }
+
+
 }
+

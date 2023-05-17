@@ -1,60 +1,80 @@
 package com.butchery.purchaseservice.presentationlayer;
 
-import com.butchery.purchaseservice.businesslayer.PurchaseService;
-import com.butchery.purchaseservice.datalayer.*;
-import com.butchery.purchaseservice.datamappinglayer.PurchaseResponseModelMapper;
+import com.butchery.purchaseservice.datalayer.PaymentMethod;
+import com.butchery.purchaseservice.datalayer.PurchaseRepository;
+import com.butchery.purchaseservice.datalayer.PurchaseStatus;
 import com.butchery.purchaseservice.domainclientlayer.butcher.ButcherResponseModel;
-import com.butchery.purchaseservice.domainclientlayer.butcher.ButcherServiceClient;
 import com.butchery.purchaseservice.domainclientlayer.customer.CustomerResponseModel;
-import com.butchery.purchaseservice.domainclientlayer.customer.CustomerServiceClient;
+import com.butchery.purchaseservice.domainclientlayer.meat.MeatRequestModel;
 import com.butchery.purchaseservice.domainclientlayer.meat.MeatResponseModel;
-import com.butchery.purchaseservice.domainclientlayer.meat.MeatServiceClient;
 import com.butchery.purchaseservice.domainclientlayer.meat.Status;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.client.ExpectedCount;
+import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
-@SpringBootTest
-@TestPropertySource(properties = "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration")
+@SpringBootTest(webEnvironment = RANDOM_PORT)
 class CustomerPurchaseControllerIntegrationTest {
+
+    @Autowired
+    WebTestClient webTestClient;
+
+    @Autowired
+    RestTemplate restTemplate;
+
+    private MockRestServiceServer mockRestServiceServer;
+    private ObjectMapper mapper = new ObjectMapper();
+
+    private final String BASE_URI_MEATS = "/api/v1/meats";
+    private final String VALID_MEAT_ID="8098bbbb-5d02-443c-9112-9661282befe1";
+    private final String VALID_ANIMAL = "Beef";
+    private final Status VALID_STATUS = Status.AVAILABLE;
+    private final String VALID_ENVIRONMENT = "farm";
+    private final String VALID_TEXTURE = "tender";
+    private final String VALID_EXPIRATION_DATE = "24-08-2024";
+    private final Integer VALID_PRICE = 10;
+
 
 
     @Autowired
-    PurchaseService purchaseService;
-
-    @MockBean
-    CustomerServiceClient customerServiceClient;
-
-    @MockBean
-    ButcherServiceClient butcherServiceClient;
-
-    @MockBean
-    MeatServiceClient meatServiceClient;
-
-    @MockBean
     PurchaseRepository purchaseRepository;
 
-    @SpyBean
-    PurchaseResponseModelMapper purchaseResponseModelMapper;
+    @BeforeEach
+    public void init(){
+        mockRestServiceServer = MockRestServiceServer.createServer(restTemplate);
+    }
 
-/*
     @Test
     void getAllCustomerPurchases() {
+
     }
 
     @Test
     void getAllCustomerPurchaseByCustomerIdAndPurchaseId() {
+    }
 
-
+    @Test
+    void processCustomerPurchase() {
     }
 
     @Test
@@ -65,101 +85,96 @@ class CustomerPurchaseControllerIntegrationTest {
     void removeCustomerPurchase() {
     }
 
- */
-
     @Test
-    void whenValidCustomerId_MeatId_ButcherId_thenProcessCustomerPurchase_ShouldSucceed(){
+    public void whenFieldsAreValid_theReturnPurchaseResponseModel() throws JsonProcessingException, URISyntaxException {
 
+        /*
         //arrange
         PurchaseRequestModel purchaseRequestModel = PurchaseRequestModel.builder()
-                .customerId("customerId")
-                .meatId("meatId")
-                .butcherId("butcherId")
+                .customerId("c3540a89-cb47-4c96-888e-ff96708db4d8")
+                .meatId("9034bbbb-5d02-443c-9112-9661282befe1")
+                .butcherId("77a89826-3777-4e37-8dd8-6fa31e62790d")
                 .salePrice(22.22)
                 .purchaseStatus(PurchaseStatus.PURCHASE_COMPLETED)
                 .paymentMethod(PaymentMethod.CREDIT)
                 .purchaseDate(LocalDate.of(2023, 04, 10))
                 .build();
 
-        String customerId = "customerId";
+        String customerId = "c3540a89-cb47-4c96-888e-ff96708db4d8";
 
         CustomerResponseModel customerResponseModel = new CustomerResponseModel(customerId, "Joe", "Burrow", "joeburrow@gmail.com", "514-123-4356","street", "city", "province","country","postalCode");
 
-        MeatResponseModel meatResponseModel= new MeatResponseModel("1234", "animal", Status.SOLD,"environment", "texture",  "expirationDate", 20.22);
-
-        ButcherResponseModel butcherResponseModel = new ButcherResponseModel("5678", "Joe", "Burrow", 21, "joeburrow@gmail.com", "514-123-4356", 45000.00, 4.5, "street", "city", "province","country","postalCode");
-
-
-
-        //required for purchaseOrder repo mock
-        Purchase purchase = buildPurchase1();
-        Purchase saved = buildPurchase1();
-        saved.setId("0001");
+        mockRestServiceServer.expect(ExpectedCount.once(), requestTo(new URI("http://localhost:7001/api/v1/customers/c3540a89-cb47-4c96-888e-ff96708db4d8")))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withStatus(HttpStatus.OK)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(mapper.writeValueAsString(customerResponseModel)));
 
 
-        //define mock behaviors
-        when(customerServiceClient.getCustomerByCustomerId(customerId)).thenReturn(customerResponseModel);
-        when(butcherServiceClient.getButcherByButcherId(purchaseRequestModel.getButcherId())).thenReturn(butcherResponseModel);
-        when(meatServiceClient.getMeatByMeatId(purchaseRequestModel.getMeatId())).thenReturn(meatResponseModel);
+        MeatResponseModel meatResponseModel= new MeatResponseModel("9034bbbb-5d02-443c-9112-9661282befe1", "animal", Status.SOLD,"environment", "texture",  "expirationDate", 20.22);
 
-        when(purchaseRepository.save(any(Purchase.class))).thenReturn(saved);
+        mockRestServiceServer.expect(ExpectedCount.once(), requestTo(new URI("http://localhost:7002/api/v1/meats/9034bbbb-5d02-443c-9112-9661282befe1")))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withStatus(HttpStatus.OK)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(mapper.writeValueAsString(meatResponseModel)));
 
-
-        //act (if you dont have an act you havent tested anything)
-        PurchaseResponseModel purchaseResponseModel = purchaseService.processCustomerPurchase(purchaseRequestModel, customerId);
-
-        //assert
-        assertNotNull(purchaseResponseModel);
-        assertNotNull(purchaseResponseModel.getPurchaseId());
-        assertEquals(purchaseRequestModel.getMeatId(), purchaseResponseModel.getMeatId());
-        assertEquals(customerId, purchaseResponseModel.getCustomerId());
-        assertEquals(purchaseRequestModel.getButcherId(), purchaseResponseModel.getButcherId());
-        assertEquals(butcherResponseModel.getFirstName(), purchaseResponseModel.getButcherFirstName());
-        assertEquals(butcherResponseModel.getLastName(), purchaseResponseModel.getButcherLastName());
-        assertEquals(customerResponseModel.getFirstName(), purchaseResponseModel.getCustomerFirstName());
-        assertEquals(customerResponseModel.getLastName(), purchaseResponseModel.getCustomerLastName());
-        assertEquals(purchaseRequestModel.getSalePrice(), purchaseResponseModel.getSalePrice());
-        assertEquals(purchaseRequestModel.getPurchaseStatus(), purchaseResponseModel.getPurchaseStatus());
-        assertEquals(meatResponseModel.getAnimal(), purchaseResponseModel.getAnimal());
-        assertEquals(meatResponseModel.getEnvironment(), purchaseResponseModel.getEnvironment());
-        assertEquals(meatResponseModel.getTexture(), purchaseResponseModel.getTexture());
-        assertEquals(meatResponseModel.getExpirationDate(), purchaseResponseModel.getExpirationDate());
-        assertEquals(purchaseRequestModel.getPaymentMethod(), purchaseResponseModel.getPaymentMethod());
-        assertEquals(purchaseRequestModel.getPurchaseDate(), purchaseResponseModel.getPurchaseDate());
-
-        //for the spy
-        verify(purchaseResponseModelMapper, times(1)).entityToResponseModel(saved);
-
-
-    }
-
-    private Purchase buildPurchase1() {
-
-        var purchaseIdentifier1 = new PurchaseIdentifier();
-        var customerIdentifier1 = new CustomerIdentifier("customerId");
-        var meatIdentifier1 = new MeatIdentifier("meatId");
-        var butcherIdentifier1 = new ButcherIdentifier("butcherId");
-
-        var purchase1 = Purchase.builder()
-                .purchaseIdentifier(purchaseIdentifier1)
-                .customerIdentifier(customerIdentifier1)
-                .meatIdentifier(meatIdentifier1)
-                .butcherIdentifier(butcherIdentifier1)
-                .butcherFirstName("Joe")
-                .butcherLastName("Burrow")
-                .customerFirstName("Joe")
-                .customerLastName("Burrow")
-                .salePrice(22.22)
-                .purchaseStatus(PurchaseStatus.PURCHASE_COMPLETED)
+        MeatRequestModel meatRequestModel = MeatRequestModel.builder()
                 .animal("animal")
+                .status(Status.SOLD)
                 .environment("environment")
                 .texture("texture")
                 .expirationDate("expirationDate")
-                .paymentMethod(PaymentMethod.CREDIT)
-                .purchaseDate(LocalDate.of(2023, 04, 10))
+                .price(20.22)
                 .build();
-        return purchase1;
+
+        mockRestServiceServer.expect(ExpectedCount.once(), requestTo(new URI("http://localhost:7002/api/v1/meats/9034bbbb-5d02-443c-9112-9661282befe1")))
+                .andExpect(method(HttpMethod.PUT))
+                .andExpect(content().json(mapper.writeValueAsString(meatRequestModel)))
+                .andRespond(withStatus(HttpStatus.OK));
+
+
+
+        ButcherResponseModel butcherResponseModel = new ButcherResponseModel("77a89826-3777-4e37-8dd8-6fa31e62790d", "Joe", "Burrow", 21, "joeburrow@gmail.com", "514-123-4356", 45000.00, 4.5, "street", "city", "province","country","postalCode");
+
+        mockRestServiceServer.expect(ExpectedCount.once(), requestTo(new URI("http://localhost:7003/api/v1/butchers/77a89826-3777-4e37-8dd8-6fa31e62790d")))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withStatus(HttpStatus.OK)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(mapper.writeValueAsString(butcherResponseModel)));
+
+
+        //act and assert
+        String url = "api/v1/customers/" + customerId + "/purchases";
+        webTestClient.post()
+                .uri(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(purchaseRequestModel)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isCreated()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody(PurchaseResponseModel.class)
+                .value((purchaseResponseModel) -> {
+                    assertNotNull(purchaseResponseModel);
+                    assertNotNull(purchaseResponseModel.getPurchaseId());
+                    assertEquals(purchaseRequestModel.getMeatId(), purchaseResponseModel.getMeatId());
+                    assertEquals(customerId, purchaseResponseModel.getCustomerId());
+                    assertEquals(purchaseRequestModel.getButcherId(), purchaseResponseModel.getButcherId());
+                    assertEquals(butcherResponseModel.getFirstName(), purchaseResponseModel.getButcherFirstName());
+                    assertEquals(butcherResponseModel.getLastName(), purchaseResponseModel.getButcherLastName());
+                    assertEquals(customerResponseModel.getFirstName(), purchaseResponseModel.getCustomerFirstName());
+                    assertEquals(customerResponseModel.getLastName(), purchaseResponseModel.getCustomerLastName());
+                    assertEquals(purchaseRequestModel.getSalePrice(), purchaseResponseModel.getSalePrice());
+                    assertEquals(purchaseRequestModel.getPurchaseStatus(), purchaseResponseModel.getPurchaseStatus());
+                    assertEquals(meatResponseModel.getAnimal(), purchaseResponseModel.getAnimal());
+                    assertEquals(meatResponseModel.getEnvironment(), purchaseResponseModel.getEnvironment());
+                    assertEquals(meatResponseModel.getTexture(), purchaseResponseModel.getTexture());
+                    assertEquals(meatResponseModel.getExpirationDate(), purchaseResponseModel.getExpirationDate());
+                    assertEquals(purchaseRequestModel.getPaymentMethod(), purchaseResponseModel.getPaymentMethod());
+                    assertEquals(purchaseRequestModel.getPurchaseDate(), purchaseResponseModel.getPurchaseDate());
+                });
+
+         */
     }
-
-
 }
