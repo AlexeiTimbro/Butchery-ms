@@ -92,7 +92,6 @@ class CustomerPurchaseControllerIntegrationTest {
         objectMapper.registerModule(new JavaTimeModule());
 
         PurchaseRequestModel purchaseRequestModel = PurchaseRequestModel.builder()
-                .purchaseId("purchaseId")
                 .customerId("customerId")
                 .meatId("meatId")
                 .butcherId("butcherId")
@@ -137,7 +136,6 @@ class CustomerPurchaseControllerIntegrationTest {
         objectMapper.registerModule(new JavaTimeModule());
 
         PurchaseRequestModel purchaseRequestModel = PurchaseRequestModel.builder()
-                .purchaseId("purchaseId")
                 .customerId("customerId")
                 .meatId("meatId")
                 .butcherId("butcherId")

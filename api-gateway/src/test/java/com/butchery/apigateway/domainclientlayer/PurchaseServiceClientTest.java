@@ -120,7 +120,6 @@ class PurchaseServiceClientTest {
     @Test
     public void addPurchaseTest() {
         PurchaseRequestModel purchaseRequestModel = PurchaseRequestModel.builder()
-                .purchaseId("purchaseId")
                 .customerId("customerId")
                 .meatId("meatId")
                 .butcherId("butcherId")
@@ -159,7 +158,6 @@ class PurchaseServiceClientTest {
         String expectedUrl = "http://localhost:8080/api/v1/customers/customerId/purchases/" + purchaseId;
 
         PurchaseRequestModel purchaseRequestModel = PurchaseRequestModel.builder()
-                .purchaseId("purchaseId")
                 .customerId("customerId")
                 .meatId("meatId")
                 .butcherId("butcherId")

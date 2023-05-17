@@ -16,7 +16,7 @@ spring:
       username: user
       password: pwd
       host: localhost
-      port: 27017
+      port: 0
       database: purchases-db
       authentication-database: admin
       auto-index-creation: true
@@ -45,6 +45,7 @@ spring:
       on-profile: docker
 
 spring.data.mongodb.host: mongodb
+spring.data.mongodb.port: 27017
 
 app:
   customers-service:

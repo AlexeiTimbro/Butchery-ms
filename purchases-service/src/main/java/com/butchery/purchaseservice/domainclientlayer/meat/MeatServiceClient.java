@@ -73,13 +73,8 @@ public class MeatServiceClient {
             String url=MEAT_SERVICE_BASE_URL+"/"+meatId;
             restTemplate.put(url,meatRequestModel);
 
-            log.debug("5. Received in API-Gateway Meat Service Client updateMeatStatus with meatId: "
-                    +meatId);
-
         }
         catch(HttpClientErrorException ex){
-            log.debug("5. Received in API-Gateway Meat Service Client updateMeatStatus with exception: "
-                    +ex.getMessage());
             throw handleHttpClientException(ex);
         }
     }

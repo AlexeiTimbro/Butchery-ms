@@ -1,6 +1,5 @@
 package com.butchery.meatservice.datamapperlayer;
 
-
 import com.butchery.meatservice.datalayer.Meat;
 import com.butchery.meatservice.presentationlayer.MeatController;
 import com.butchery.meatservice.presentationlayer.MeatResponseModel;
@@ -9,7 +8,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.hateoas.Link;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -24,17 +25,25 @@ public interface MeatResponseMapper {
     List<MeatResponseModel> entityListToResponseModelList(List<Meat> meats);
 
     @AfterMapping
-    default void addLinks(@MappingTarget MeatResponseModel model, Meat meat) {
+    default void addLinks(@MappingTarget MeatResponseModel meatResponseModel, Meat meat) {
 
-        //self Link
-        Link selfLink = linkTo(methodOn(MeatController.class)
-                .getMeatByMeatId(model.getMeatId()))
-                .withSelfRel();
-        model.add(selfLink);
+        URI baseUri = URI.create("http://localhost:8080");
 
-        Link meatLink = linkTo(methodOn(MeatController.class)
-                .getMeats())
-                .withRel("All Meats");
-        model.add(meatLink);
+        Link selfLink = Link.of(
+                ServletUriComponentsBuilder
+                        .fromUri(baseUri)
+                        .pathSegment("api", "v1", "meats", meatResponseModel.getMeatId())
+                        .toUriString(),
+                "Self Link");
+
+        Link meatLink = Link.of(
+                ServletUriComponentsBuilder
+                        .fromUri(baseUri)
+                        .pathSegment("api", "v1", "meats")
+                        .toUriString(),
+                "All Meats");
+
+        meatResponseModel.add(selfLink);
+        meatResponseModel.add(meatLink);
     }
 }

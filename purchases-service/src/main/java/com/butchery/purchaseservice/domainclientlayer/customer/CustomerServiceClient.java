@@ -41,7 +41,6 @@ public class CustomerServiceClient {
     //GET BY ID
 
     public CustomerResponseModel getCustomerByCustomerId(String customerId){
-        log.debug("3. Received in API-Gateway CustomerServiceClient getCustomerByCustomerId with customerId: " + customerId);
 
         try{
             String url = CUSTOMER_SERVICE_BASE_URL +"/" + customerId;
@@ -49,15 +48,10 @@ public class CustomerServiceClient {
             CustomerResponseModel customerResponseModel = restTemplate
                     .getForObject(url, CustomerResponseModel.class);
 
-
-            log.debug("5. Received in API-Gateway CustomerServiceClient getCustomerByCustomerId with CustomerResponseModel: "
-                    + customerResponseModel.getCustomerId());
-
             return customerResponseModel;
         }
 
         catch(HttpClientErrorException ex){
-            log.debug("5. Received in API-Gateway CustomerServiceClient getCustomerByCustomerId with exception: " + ex.getMessage());
             throw handleHttpClientException(ex);
         }
     }
@@ -78,8 +72,6 @@ public class CustomerServiceClient {
         if (ex.getStatusCode() == NOT_FOUND) {
             return new NotFoundException(getErrorMessage(ex));
         }
-        log.warn("Got a unexpected HTTP error: {}, will rethrow it", ex.getStatusCode());
-        log.warn("Error body: {}", ex.getResponseBodyAsString());
         return ex;
     }
 

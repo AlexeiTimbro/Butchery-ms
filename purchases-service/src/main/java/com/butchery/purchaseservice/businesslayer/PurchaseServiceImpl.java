@@ -34,11 +34,14 @@ public class PurchaseServiceImpl implements PurchaseService {
     private final MeatServiceClient meatServiceClient;
 
 
+    /*
     @Override
     public List<PurchaseResponseModel> getAllPurchaseAggregate() {
         List<Purchase> purchases = purchaseRepository.findAll();
         return purchaseResponseModelMapper.entityListToResponseModelList(purchases);
     }
+
+     */
 
     @Override
     public List<PurchaseResponseModel> getAllCustomerPurchases(String customerId) {
@@ -46,6 +49,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         return purchaseResponseModelMapper.entityListToResponseModelList(purchases);
     }
 
+    /*
     @Override
     public PurchaseResponseModel getPurchaseByPurchaseIdAggregate(String purchaseId) {
         Purchase purchase = purchaseRepository.findPurchaseByPurchaseIdentifier_PurchaseId(purchaseId);
@@ -57,6 +61,8 @@ public class PurchaseServiceImpl implements PurchaseService {
         return purchaseResponseModelMapper.entityToResponseModel(purchase);
 
     }
+
+     */
 
     @Override
     public PurchaseResponseModel getCustomerPurchaseByCustomerAndPurchaseId(String customerId, String purchaseId) {
@@ -214,6 +220,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     }
 
+    /*
     @Override
     public void deletePurchaseAggregate(String purchaseId) {
 
@@ -227,6 +234,8 @@ public class PurchaseServiceImpl implements PurchaseService {
                 purchaseRepository.delete(existingPurchase);
             }
     }
+
+     */
 
     @Override
     public void deleteCustomerPurchaseByCustomerAndPurchaseId(String customerId, String purchaseId) {

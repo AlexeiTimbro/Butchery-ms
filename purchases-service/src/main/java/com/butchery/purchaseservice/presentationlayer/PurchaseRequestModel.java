@@ -13,7 +13,6 @@ import java.time.LocalDate;
 @Value
 public class PurchaseRequestModel {
 
-    String purchaseId;
     String customerId;
     String meatId;
     String butcherId;

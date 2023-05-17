@@ -8,7 +8,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.hateoas.Link;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -25,17 +27,25 @@ public interface ButcherResponseMapper {
 
 
     @AfterMapping
-    default void addLinks(@MappingTarget ButcherResponseModel model, Butcher butcher) {
+    default void addLinks(@MappingTarget ButcherResponseModel butcherResponseModel, Butcher butcher) {
 
-        //self Link
-        Link selfLink = linkTo(methodOn(ButcherController.class)
-                .getButcherByButcherId(model.getButcherId()))
-                .withSelfRel();
-        model.add(selfLink);
+        URI baseUri = URI.create("http://localhost:8080");
 
-        Link butcherLink = linkTo(methodOn(ButcherController.class)
-                .getButchers())
-                .withRel("All Butchers");
-        model.add(butcherLink);
+        Link selfLink = Link.of(
+                ServletUriComponentsBuilder
+                        .fromUri(baseUri)
+                        .pathSegment("api", "v1", "butchers", butcherResponseModel.getButcherId())
+                        .toUriString(),
+                "Self Link");
+
+        Link butcherLink = Link.of(
+                ServletUriComponentsBuilder
+                        .fromUri(baseUri)
+                        .pathSegment("api", "v1", "butchers")
+                        .toUriString(),
+                "All Butchers");
+
+        butcherResponseModel.add(selfLink);
+        butcherResponseModel.add(butcherLink);
     }
 }

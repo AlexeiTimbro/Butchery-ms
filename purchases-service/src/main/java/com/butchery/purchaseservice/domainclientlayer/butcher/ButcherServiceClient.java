@@ -40,10 +40,7 @@ public class ButcherServiceClient {
 
     //GET BY ID
 
-
-
     public ButcherResponseModel getButcherByButcherId(String butcherId){
-        log.debug("3. Received in API-Gateway ButcherServiceClient getButcherByButcherId with butcherId: " + butcherId);
 
         try{
             String url = BUTCHER_SERVICE_BASE_URL +"/" + butcherId;
@@ -51,20 +48,13 @@ public class ButcherServiceClient {
             ButcherResponseModel butcherResponseModel = restTemplate
                     .getForObject(url, ButcherResponseModel.class);
 
-
-            log.debug("5. Received in API-Gateway ButcherServiceClient getButcherByButcherId with ButcherResponseModel: "
-                    + butcherResponseModel.getButcherId());
-
-
             return butcherResponseModel;
         }
 
         catch(HttpClientErrorException ex){
-            log.debug("5. Received in API-Gateway ButcherServiceClient getButcherByButcherId with exception: " + ex.getMessage());
             throw handleHttpClientException(ex);
         }
     }
-
 
 
 
@@ -83,8 +73,6 @@ public class ButcherServiceClient {
         if (ex.getStatusCode() == NOT_FOUND) {
             return new NotFoundException(getErrorMessage(ex));
         }
-        log.warn("Got a unexpected HTTP error: {}, will rethrow it", ex.getStatusCode());
-        log.warn("Error body: {}", ex.getResponseBodyAsString());
         return ex;
     }
 
