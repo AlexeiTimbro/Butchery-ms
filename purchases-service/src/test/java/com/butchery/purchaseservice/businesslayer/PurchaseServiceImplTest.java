@@ -31,7 +31,6 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(properties = "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration")
 class PurchaseServiceImplTest {
 
-
     @Autowired
     PurchaseService purchaseService;
 
@@ -49,7 +48,6 @@ class PurchaseServiceImplTest {
 
     @SpyBean
     PurchaseResponseModelMapper purchaseResponseModelMapper;
-
 
     @Test
     void getAllCustomerPurchases() {

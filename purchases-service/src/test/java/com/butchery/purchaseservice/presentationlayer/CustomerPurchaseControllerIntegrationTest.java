@@ -1,5 +1,7 @@
 package com.butchery.purchaseservice.presentationlayer;
 
+import com.butchery.purchaseservice.Utils.HttpErrorInfo;
+import com.butchery.purchaseservice.datalayer.MeatIdentifier;
 import com.butchery.purchaseservice.datalayer.PaymentMethod;
 import com.butchery.purchaseservice.datalayer.PurchaseRepository;
 import com.butchery.purchaseservice.datalayer.PurchaseStatus;
@@ -10,6 +12,7 @@ import com.butchery.purchaseservice.domainclientlayer.meat.MeatResponseModel;
 import com.butchery.purchaseservice.domainclientlayer.meat.Status;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -27,13 +31,16 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
+@Slf4j
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class CustomerPurchaseControllerIntegrationTest {
 
     @Autowired
@@ -45,15 +52,10 @@ class CustomerPurchaseControllerIntegrationTest {
     private MockRestServiceServer mockRestServiceServer;
     private ObjectMapper mapper = new ObjectMapper();
 
-    private final String BASE_URI_MEATS = "/api/v1/meats";
-    private final String VALID_MEAT_ID="8098bbbb-5d02-443c-9112-9661282befe1";
-    private final String VALID_ANIMAL = "Beef";
-    private final Status VALID_STATUS = Status.AVAILABLE;
-    private final String VALID_ENVIRONMENT = "farm";
-    private final String VALID_TEXTURE = "tender";
-    private final String VALID_EXPIRATION_DATE = "24-08-2024";
-    private final Integer VALID_PRICE = 10;
+    private String customerId = "c3540a89-cb47-4c96-888e-ff96708db4d8";
+    private UUID purchaseId;
 
+    private final String BASE_URI_CUSTOMER_PURCHASES = "/api/v1/customers/" + customerId + "/purchases";
 
 
     @Autowired
@@ -67,10 +69,56 @@ class CustomerPurchaseControllerIntegrationTest {
     @Test
     void getAllCustomerPurchases() {
 
+        /*
+
+        Integer expectedNumPurchases =5;
+
+        // act
+        webTestClient.get()
+                .uri(BASE_URI_CUSTOMER_PURCHASES + "/" + purchaseId)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("$.length()").isEqualTo(expectedNumPurchases);
+
+         */
     }
 
     @Test
     void getAllCustomerPurchaseByCustomerIdAndPurchaseId() {
+
+        /*
+        webTestClient.get().uri(BASE_URI_CUSTOMER_PURCHASES + "/" + purchaseId).accept(MediaType.APPLICATION_JSON).exchange().expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON).expectBody()
+                .jsonPath("$.meatId").isEqualTo(VALID_MEAT_ID)
+                .jsonPath("$.animal").isEqualTo(VALID_ANIMAL)
+                .jsonPath("$.environment").isEqualTo(VALID_ENVIRONMENT)
+                .jsonPath("$.texture").isEqualTo(VALID_TEXTURE)
+                .jsonPath("$.expirationDate").isEqualTo(VALID_EXPIRATION_DATE)
+                .jsonPath("$.price").isEqualTo(VALID_PRICE);
+
+
+        assertNotNull(purchaseResponseModel);
+        assertNotNull(purchaseResponseModel.getPurchaseId());
+        assertEquals(purchaseRequestModel.getMeatId(), purchaseResponseModel.getMeatId());
+        assertEquals(customerId, purchaseResponseModel.getCustomerId());
+        assertEquals(purchaseRequestModel.getButcherId(), purchaseResponseModel.getButcherId());
+        assertEquals(butcherResponseModel.getFirstName(), purchaseResponseModel.getButcherFirstName());
+        assertEquals(butcherResponseModel.getLastName(), purchaseResponseModel.getButcherLastName());
+        assertEquals(customerResponseModel.getFirstName(), purchaseResponseModel.getCustomerFirstName());
+        assertEquals(customerResponseModel.getLastName(), purchaseResponseModel.getCustomerLastName());
+        assertEquals(purchaseRequestModel.getSalePrice(), purchaseResponseModel.getSalePrice());
+        assertEquals(purchaseRequestModel.getPurchaseStatus(), purchaseResponseModel.getPurchaseStatus());
+        assertEquals(meatResponseModel.getAnimal(), purchaseResponseModel.getAnimal());
+        assertEquals(meatResponseModel.getEnvironment(), purchaseResponseModel.getEnvironment());
+        assertEquals(meatResponseModel.getTexture(), purchaseResponseModel.getTexture());
+        assertEquals(meatResponseModel.getExpirationDate(), purchaseResponseModel.getExpirationDate());
+        assertEquals(purchaseRequestModel.getPaymentMethod(), purchaseResponseModel.getPaymentMethod());
+        assertEquals(purchaseRequestModel.getPurchaseDate(), purchaseResponseModel.getPurchaseDate());
+
+         */
     }
 
     @Test
@@ -83,6 +131,32 @@ class CustomerPurchaseControllerIntegrationTest {
 
     @Test
     void removeCustomerPurchase() {
+
+/*
+        webTestClient.delete().uri(BASE_URI_CUSTOMER_PURCHASES + "/" + purchaseId)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange().expectStatus().isNoContent();
+
+        String uri =BASE_URI_CUSTOMER_PURCHASES + "/" + purchaseId;
+        webTestClient.get()
+                .uri(BASE_URI_CUSTOMER_PURCHASES + "/" + purchaseId)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus()
+                .isEqualTo(HttpStatus.NOT_FOUND)
+                .expectBody(HttpErrorInfo.class).value((dto) -> {
+                            assertNotNull(dto.getMessage());
+                            assertEquals(dto.getPath(), "uri=/" + uri);
+                        }
+                );
+
+        webTestClient.delete()
+                .uri(BASE_URI_CUSTOMER_PURCHASES + "/" + purchaseId)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isNoContent();
+*/
+
     }
 
     @Test
@@ -176,5 +250,6 @@ class CustomerPurchaseControllerIntegrationTest {
                 });
 
          */
+
     }
 }
