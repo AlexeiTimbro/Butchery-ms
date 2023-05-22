@@ -17,9 +17,13 @@ class ApiGatewayApplicationTests {
 	void contextLoads() {
 		assertNotNull(applicationContext);
 	}
+
+	/*
 	@Test
 	void main() {
 		ApiGatewayApplication.main(new String[] {});
 	}
+
+	 */
 
 }

@@ -224,7 +224,7 @@ fi
 #try to delete an entity/aggregate that you've set up but that you don't need. This will confirm that things are working
 #I've set up an inventory with no menus in it
 
-#waitForService "curl -X DELETE http://$HOST:$PORT/api/v1/customers/2fde646d-0c9e-43b6-b2b7-526d151a594d"
+waitForService "curl -X DELETE http://$HOST:$PORT/api/v1/customers/2fde646d-0c9e-43b6-b2b7-526d151a594d"
 
 setupTestdata
 

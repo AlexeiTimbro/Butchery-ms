@@ -83,7 +83,7 @@ class CustomerPurchaseControllerIntegrationTest {
                 .expectBody()
                 .jsonPath("$.length()").isEqualTo(expectedNumPurchases);
 
-         */
+         *
     }
 
     @Test
